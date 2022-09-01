@@ -22,5 +22,12 @@ if __name__ == '__main__':
     timer_match_data.setInterval(window.settings.match_data_call_ms)
     timer_match_data.start()
 
+    # timer for villager reminders
+    timer_villager = QTimer()
+    timer_villager.timeout.connect(window.timer_villager_reminder)
+    timer_villager.setInterval(int((25 / 1.7) * 1000))  # 25 sec at 1.7 game speed in ms
+    # timer_villager.setInterval(100)
+    timer_villager.start()
+
     exit_event = App.exec()
     sys.exit(exit_event)

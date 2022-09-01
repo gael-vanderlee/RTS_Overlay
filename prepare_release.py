@@ -21,6 +21,7 @@ def compile_clean(name_overlay: str, game_folder: str, out_lib_name: str,
     main_command = ('cmd /c "python -m nuitka'
                     ' --standalone'
                     ' --plugin-enable=pyqt5'
+                    # ' --macos-create-app-bundle'
                     f' --windows-icon-from-ico={icon}'
                     f' --include-data-dir=common=common'
                     f' --include-data-dir={game_folder}={game_folder}'

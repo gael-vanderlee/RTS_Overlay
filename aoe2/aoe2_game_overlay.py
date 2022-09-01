@@ -2,9 +2,11 @@
 import os
 from enum import Enum
 from threading import Event
+from random import choice
 
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import Qt
+from PyQt5.QtMultimedia import QSound
 
 from common.label_display import QLabelSettings
 from common.useful_tools import cut_name_length, widget_x_end, widget_y_end
@@ -401,9 +403,11 @@ class AoE2GameOverlay(RTSGameOverlay):
 
         # show elements
         if self.selected_build_order is not None:
+            self.reminder_checkbox.show()
             self.build_order_step.show()
             self.build_order_previous_button.show()
             self.build_order_next_button.show()
+
         self.next_panel_button.show()
         self.build_order_notes.show()
         self.build_order_resources.show()
@@ -451,6 +455,9 @@ class AoE2GameOverlay(RTSGameOverlay):
 
             next_x -= (self.build_order_step.width() + horizontal_spacing)
             self.build_order_step.move(next_x, border_size)
+
+            next_x -= (self.reminder_checkbox.width() + horizontal_spacing)
+            self.reminder_checkbox.move(next_x, border_size)
 
         # position update to stay with the same upper right corner position
         self.update_position()
@@ -768,6 +775,7 @@ class AoE2GameOverlay(RTSGameOverlay):
             elif self.selected_panel == PanelID.BUILD_ORDER:  # build order specific buttons
                 self.build_order_previous_button.hovering_show(self.is_mouse_in_roi_widget)
                 self.build_order_next_button.hovering_show(self.is_mouse_in_roi_widget)
+                self.reminder_checkbox.hovering_show(self.is_mouse_in_roi_widget)
                 self.build_order_resources.hover_tooltip(self.mouse_x - self.x(), self.mouse_y - self.y(), self)
 
     def timer_match_data_call(self):
@@ -777,6 +785,15 @@ class AoE2GameOverlay(RTSGameOverlay):
 
             if self.selected_panel == PanelID.MATCH_DATA:
                 self.update_match_data_display()  # layout updated in function
+
+    def timer_villager_reminder(self):
+        """Function called on a timer to remind the player to make new villagers"""
+        if self.selected_panel == PanelID.BUILD_ORDER and self.reminder_checkbox.is_checked():
+            reminders_folder = os.path.join(self.directory_audio, 'villager_reminder')
+            reminder_sounds = os.listdir(reminders_folder)
+            selected_sound = choice(reminder_sounds)
+            sound = QSound(os.path.join(reminders_folder, selected_sound), self)
+            sound.play()
 
     def enter_key_actions(self):
         """Actions performed when pressing the Enter key"""

@@ -10,7 +10,7 @@ from PyQt5.QtCore import Qt, QPoint, QSize
 
 from common.build_order_tools import get_build_orders
 from common.label_display import MultiQLabelDisplay, QLabelSettings
-from common.useful_tools import TwinHoverButton, scale_int, scale_list_int
+from common.useful_tools import TwinHoverButton, scale_int, scale_list_int, Checkbox
 
 from thefuzz import process
 
@@ -67,6 +67,7 @@ class RTSGameOverlay(QMainWindow):
         self.directory_build_orders = os.path.join(self.directory_main, 'build_orders', name_game)  # build orders
         self.directory_game_pictures = os.path.join(self.directory_main, 'pictures', name_game)  # game pictures
         self.directory_common_pictures = os.path.join(self.directory_main, 'pictures', 'common')  # common pictures
+        self.directory_audio = os.path.join(self.directory_main, 'audio')  # audio files
 
         # settings
         self.unscaled_settings = settings_class()
@@ -233,6 +234,11 @@ class RTSGameOverlay(QMainWindow):
             parent=self, click_connect=self.build_order_next_step,
             icon=QIcon(os.path.join(self.directory_common_pictures, images.build_order_next_step)),
             button_qsize=action_button_qsize, tooltip='next build order step')
+
+        # self.reminder_checkbox = QCheckBox("", self)
+        self.reminder_checkbox = Checkbox(
+            parent=self, click_connect=None, layout=layout)
+        # self.reminder_checkbox.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
 
         # enter key selection
         hotkeys = self.settings.hotkeys
@@ -908,6 +914,7 @@ class RTSGameOverlay(QMainWindow):
         self.build_order_step.hide()
         self.build_order_previous_button.hide()
         self.build_order_next_button.hide()
+        self.reminder_checkbox.hide()
 
         # police, scaling combo
         self.font_size_input.hide()
