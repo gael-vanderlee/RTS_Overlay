@@ -27,7 +27,9 @@ def compile_clean(name_overlay: str, game_folder: str, out_lib_name: str,
                     f' --include-data-dir={game_folder}={game_folder}'
                     f' --include-data-dir=pictures/common=pictures/common'
                     f' --include-data-dir=pictures/{game_folder}=pictures/{game_folder}'
-                    f' --include-data-dir=build_orders/{game_folder}=build_orders/{game_folder}')
+                    f' --include-data-dir=build_orders/{game_folder}=build_orders/{game_folder}'
+                    f' --include-data-dir=audio=audio'
+                    )
 
     if disable_console:  # disable the console
         command = main_command + ' --windows-disable-console' + f' {name_overlay}.py'

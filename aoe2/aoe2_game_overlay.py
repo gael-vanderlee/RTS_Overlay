@@ -6,7 +6,7 @@ from random import choice
 
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import Qt
-from PyQt5.QtMultimedia import QSound
+from playsound import playsound
 
 from common.label_display import QLabelSettings
 from common.useful_tools import cut_name_length, widget_x_end, widget_y_end
@@ -792,8 +792,8 @@ class AoE2GameOverlay(RTSGameOverlay):
             reminders_folder = os.path.join(self.directory_audio, 'villager_reminder')
             reminder_sounds = os.listdir(reminders_folder)
             selected_sound = choice(reminder_sounds)
-            sound = QSound(os.path.join(reminders_folder, selected_sound), self)
-            sound.play()
+            # Using playsound since PyQT's QSound stops working once compiled by Nuitka
+            playsound(os.path.join(reminders_folder, selected_sound), False)
 
     def enter_key_actions(self):
         """Actions performed when pressing the Enter key"""
