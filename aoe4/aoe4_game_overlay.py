@@ -7,7 +7,6 @@ from PyQt5.QtWidgets import QComboBox, QApplication
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize, Qt
 
-from common.build_order_tools import get_total_on_resource
 from common.label_display import QLabelSettings
 from common.useful_tools import cut_name_length, widget_x_end, widget_y_end
 from common.rts_overlay import RTSGameOverlay, scale_int, scale_list_int
@@ -65,9 +64,6 @@ class AoE4GameOverlay(RTSGameOverlay):
         )
         self.civilization_select.setToolTip('select civilization')
         self.civilization_select.adjustSize()
-
-        # create build orders folder
-        os.makedirs(self.directory_build_orders, exist_ok=True)
 
         # match data
         self.match_data_thread_started = False  # True after the first call to 'get_match_data_threading'
@@ -189,9 +185,6 @@ class AoE4GameOverlay(RTSGameOverlay):
     def next_panel(self):
         """Select the next panel"""
 
-        # clear tooltip
-        self.build_order_tooltip.clear()
-
         # saving the upper right corner position
         if self.selected_panel == PanelID.CONFIG:
             self.save_upper_right_position()
@@ -217,7 +210,7 @@ class AoE4GameOverlay(RTSGameOverlay):
 
         self.civilization_select.hide()
 
-    def get_age_image(self, age_id: int) -> str:
+    def get_age_image(self, age_id: int):
         """Get the image for a requested age
 
         Parameters
@@ -257,8 +250,6 @@ class AoE4GameOverlay(RTSGameOverlay):
         self.config_quit_button.show()
         self.config_save_button.show()
         self.config_reload_button.show()
-        self.config_hotkey_button.show()
-        self.config_build_order_button.show()
         self.font_size_input.show()
         self.scaling_input.show()
         self.next_panel_button.show()
@@ -272,6 +263,10 @@ class AoE4GameOverlay(RTSGameOverlay):
         self.username_title.show()
         self.username_search.show()
         self.username_selection.show()
+
+        # adjust the size of the elements
+        self.build_order_search.adjustSize()
+        self.username_search.adjustSize()
 
         # configuration buttons
         layout = self.settings.layout
@@ -287,10 +282,6 @@ class AoE4GameOverlay(RTSGameOverlay):
         self.config_save_button.move(next_x, border_size)
         next_x += action_button_size + action_button_spacing
         self.config_reload_button.move(next_x, border_size)
-        next_x += action_button_size + action_button_spacing
-        self.config_hotkey_button.move(next_x, border_size)
-        next_x += action_button_size + action_button_spacing
-        self.config_build_order_button.move(next_x, border_size)
         next_x += action_button_size + horizontal_spacing
         self.font_size_input.move(next_x, border_size)
         next_x += self.font_size_input.width() + horizontal_spacing
@@ -361,7 +352,7 @@ class AoE4GameOverlay(RTSGameOverlay):
         if (self.selected_panel == PanelID.BUILD_ORDER) and super().build_order_next_step():
             self.update_build_order()  # update the rendering
 
-    def select_build_order_id(self, build_order_id: int = -1) -> bool:
+    def select_build_order_id(self, build_order_id: int = -1):
         """Select build order ID
 
         Parameters
@@ -379,8 +370,7 @@ class AoE4GameOverlay(RTSGameOverlay):
                 self.obtain_build_order_search(
                     key_condition={'civilization': self.civilization_combo_ids[civilization_id]})
                 if build_order_id >= 0:  # directly select in case of clicking
-                    self.select_build_order(key_condition={
-                        'civilization': self.civilization_combo_ids[self.civilization_select.currentIndex()]})
+                    self.select_build_order()
                 self.config_panel_layout()
                 return True
         return False
@@ -405,12 +395,10 @@ class AoE4GameOverlay(RTSGameOverlay):
 
             # target resources
             target_resources = selected_step['resources']
-            target_food = get_total_on_resource(target_resources['food'])
-            target_wood = get_total_on_resource(target_resources['wood'])
-            target_gold = get_total_on_resource(target_resources['gold'])
-            target_stone = get_total_on_resource(target_resources['stone'])
-            target_builder = get_total_on_resource(target_resources['builder']) if (
-                    'builder' in target_resources) else -1
+            target_food = target_resources['food']
+            target_wood = target_resources['wood']
+            target_gold = target_resources['gold']
+            target_stone = target_resources['stone']
             target_villager = selected_step['villager_count']
             target_population = selected_step['population_count']
 
@@ -432,8 +420,6 @@ class AoE4GameOverlay(RTSGameOverlay):
             resources_line += spacing + '@' + images.gold + '@ ' + (str(target_gold) if (target_gold >= 0) else ' ')
             resources_line += spacing + '@' + images.stone + '@ ' + (
                 str(target_stone) if (target_stone >= 0) else ' ')
-            if target_builder > 0:  # add builders count if indicated
-                resources_line += spacing + '@' + images.builder + '@ ' + str(target_builder)
             if target_villager >= 0:
                 resources_line += spacing + '@' + images.villager + '@ ' + str(target_villager)
             if target_population >= 0:
@@ -443,12 +429,7 @@ class AoE4GameOverlay(RTSGameOverlay):
             if 'time' in selected_step:  # add time if indicated
                 resources_line += '@' + spacing + '@' + self.settings.images.time + '@' + selected_step['time']
 
-            # for dict type target_resources, create a tooltip to associate with the resource icon
-            mapping = {'wood': images.wood, 'food': images.food, 'gold': images.gold, 'stone': images.stone}
-            tooltip = dict(
-                (mapping[key], value) for (key, value) in target_resources.items() if type(value) is dict)
-            self.build_order_resources.add_row_from_picture_line(
-                parent=self, line=str(resources_line), tooltips=tooltip)
+            self.build_order_resources.add_row_from_picture_line(parent=self, line=str(resources_line))
 
             # notes of the current step
             notes = selected_step['notes']
@@ -574,11 +555,14 @@ class AoE4GameOverlay(RTSGameOverlay):
                 separation += ' '
             separation += '@'
 
-            # check if player color is available
+            # check player color and rank class are available
             color_available = False
+            rank_class_available = False
             for cur_player in self.match_data.players:
                 if cur_player.color is not None:
                     color_available = True
+                if cur_player.rank_class is not None:
+                    rank_class_available = True
 
             # describe the title row with its settings
             title_line = ''
@@ -820,21 +804,10 @@ class AoE4GameOverlay(RTSGameOverlay):
             self.config_quit_button.hovering_show(self.is_mouse_in_roi_widget)
             self.config_save_button.hovering_show(self.is_mouse_in_roi_widget)
             self.config_reload_button.hovering_show(self.is_mouse_in_roi_widget)
-            self.config_hotkey_button.hovering_show(self.is_mouse_in_roi_widget)
-            self.config_build_order_button.hovering_show(self.is_mouse_in_roi_widget)
 
         elif self.selected_panel == PanelID.BUILD_ORDER:  # build order specific buttons
             self.build_order_previous_button.hovering_show(self.is_mouse_in_roi_widget)
             self.build_order_next_button.hovering_show(self.is_mouse_in_roi_widget)
-
-            # tooltip display
-            if not self.build_order_tooltip.is_visible():  # no build order tooltip still active
-                tooltip, label_x, label_y = self.build_order_resources.get_hover_tooltip(
-                    0, self.mouse_x - self.x(), self.mouse_y - self.y())
-                if tooltip is not None:  # valid tooltip to display
-                    self.build_order_tooltip.display_dictionary(
-                        tooltip, self.x() + label_x, self.y() + label_y,
-                        self.settings.layout.build_order.tooltip_timeout)
 
     def timer_match_data_call(self):
         """Function called on a timer (related to match data)"""
