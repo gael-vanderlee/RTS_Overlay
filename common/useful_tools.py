@@ -1,11 +1,11 @@
 import os
 
-from PyQt5.QtWidgets import QWidget, QPushButton, QCheckBox
+from PyQt5.QtWidgets import QWidget, QPushButton, QKeySequenceEdit, QMessageBox, QCheckBox
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QSize
 
 
-def widget_x_end(widget: QWidget):
+def widget_x_end(widget: QWidget) -> int:
     """Get the end position of a widget, along its X axis
 
     Parameters
@@ -19,7 +19,7 @@ def widget_x_end(widget: QWidget):
     return widget.x() + widget.width()
 
 
-def widget_y_end(widget: QWidget):
+def widget_y_end(widget: QWidget) -> int:
     """Get the end position of a widget, along its Y axis
 
     Parameters
@@ -60,7 +60,7 @@ def list_directory_files(directory: str, extension: str = None, recursive: bool 
                         (extension is None) or (os.path.splitext(f)[1] == extension)))]
 
 
-def cut_name_length(name: str, max_length: int):
+def cut_name_length(name: str, max_length: int) -> str:
     """Cut a name to a maximum length (and remove starting and ending spaces)
 
     Parameters
@@ -79,7 +79,7 @@ def cut_name_length(name: str, max_length: int):
         return name[:max_length - 1].strip() + '.'
 
 
-def scale_int(scaling: float, value: int):
+def scale_int(scaling: float, value: int) -> int:
     """Scaling an integer
 
     Parameters
@@ -94,7 +94,7 @@ def scale_int(scaling: float, value: int):
     return int(round(scaling * value))
 
 
-def scale_list_int(scaling: float, in_list: list):
+def scale_list_int(scaling: float, in_list: list) -> list:
     """Scaling a list of integers
 
     Parameters
@@ -134,7 +134,7 @@ class TwinHoverButton:
 
         # twin hovering button
         self.hovering_button = QPushButton()  # when hovering the mouse on mouse transparent window
-        self.hovering_button.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        self.hovering_button.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.CoverWindow)
 
         # update the icon and the size
         self.update_icon_size(icon=icon, button_qsize=button_qsize)
@@ -212,27 +212,27 @@ class TwinHoverButton:
         """
         self.button.move(x, y)
 
-    def x(self):
+    def x(self) -> int:
         """Get the X position of the main button"""
         return self.button.x()
 
-    def y(self):
+    def y(self) -> int:
         """Get the Y position of the main button"""
         return self.button.y()
 
-    def x_end(self):
+    def x_end(self) -> int:
         """Get the X end position of the main button"""
         return widget_x_end(self.button)
 
-    def y_end(self):
+    def y_end(self) -> int:
         """Get the Y end position of the main button"""
         return widget_y_end(self.button)
 
-    def width(self):
+    def width(self) -> int:
         """Get the width of the main button"""
         return self.button.width()
 
-    def height(self):
+    def height(self) -> int:
         """Get the height of the main button"""
         return self.button.height()
 
@@ -247,12 +247,94 @@ class TwinHoverButton:
         ----------
         is_mouse_in_roi_widget    function to check if hovering on the button
         """
-        if self.button.isVisible():  # only when button is visible
-            if is_mouse_in_roi_widget(self.button):
+        # only when button is visible
+        if self.button.isVisible():
+            if is_mouse_in_roi_widget(self.button) and (not self.parent.hidden):
                 self.hovering_button.move(self.parent.pos() + self.button.pos())
                 self.hovering_button.show()
             else:
                 self.hovering_button.hide()
+
+
+def set_background_opacity(window, color_background: list, opacity: float):
+    """Set the background color and opacity of a window
+
+    Parameters
+    ----------
+    window              window to update
+    color_background    color of the background for the window
+    opacity             opacity of the window
+    """
+    assert len(color_background) == 3
+    window.setStyleSheet(
+        f'background-color: rgb({color_background[0]}, {color_background[1]}, {color_background[2]})')
+    window.setWindowOpacity(opacity)
+
+
+class OverlaySequenceEdit(QKeySequenceEdit):
+    """Update on QKeySequenceEdit to adjust some inputs"""
+
+    def __init__(self, parent):
+        """Constructor
+
+        Parameters
+        ----------
+        parent    parent window
+        """
+        super().__init__(parent)
+
+    def keyPressEvent(self, QKeyEvent):
+        """Handle key input
+
+        Parameters
+        ----------
+        QKeyEvent    key event
+        """
+        super().keyPressEvent(QKeyEvent)
+
+        value = self.keySequence().toString()
+
+        if ', ' in value:  # only last value accepted
+            value = value.split(', ')[-1]
+            self.setKeySequence('' if (value == 'Esc') else value)
+
+        # 'Esc' key used to cancel the value
+        if value == 'Esc':
+            self.setKeySequence('')
+
+    def get_str(self) -> str:
+        """Get the hotkey value as a string
+
+        Returns
+        -------
+        requested string
+        """
+        out_str = self.keySequence().toString()
+
+        # replace some wrong input characters
+        replace_dict = {
+            'É': 'é',
+            'È': 'è'
+        }
+        for x, y in replace_dict.items():
+            out_str = out_str.replace(x, y)
+
+        return out_str
+
+
+def popup_message(title: str, msg_text: str):
+    """Open a popup message
+
+    Parameters
+    ----------
+    title       title of the popup window
+    msg_text    message to display
+    """
+    msg = QMessageBox()
+    msg.setWindowTitle(title)
+    msg.setText(msg_text)
+    msg.setIcon(QMessageBox.Information)
+    msg.exec_()
 
 
 class Checkbox:

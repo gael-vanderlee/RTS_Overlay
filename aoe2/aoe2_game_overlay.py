@@ -1,5 +1,6 @@
 # AoE2 game overlay
 import os
+import shutil
 from enum import Enum
 from threading import Event
 from random import choice
@@ -9,12 +10,13 @@ from PyQt5.QtCore import Qt
 from playsound import playsound
 
 from common.label_display import QLabelSettings
-from common.useful_tools import cut_name_length, widget_x_end, widget_y_end
+from common.useful_tools import cut_name_length, widget_x_end, widget_y_end, popup_message
 from common.rts_overlay import RTSGameOverlay
+from common.build_order_tools import get_total_on_resource, get_build_orders
 
 from aoe2.aoe2_settings import AoE2OverlaySettings
 from aoe2.aoe2_build_order import check_valid_aoe2_build_order
-from aoe2.aoe2_request import get_aoe2_parameters, get_aoe2_parameters_threading, get_match_data_threading
+from aoe2.aoe2_request import get_match_data_threading, is_valid_fetch_match_data
 from aoe2.aoe2_civ_icon import aoe2_civilization_icon
 
 
@@ -23,25 +25,6 @@ class PanelID(Enum):
     CONFIG = 0  # Configuration
     BUILD_ORDER = 1  # Display Build Order
     MATCH_DATA = 2  # Display Match Data
-
-
-def get_total_on_resource(resource: [int, dict]) -> int:
-    """
-    Gets an integer from either an int or a dict of sub resources
-    Parameters
-    ----------
-    resource: int or dict of resources
-
-    Returns
-    -------
-    integer amount of villagers on that resource
-    """
-    if isinstance(resource, int):
-        return resource
-    elif isinstance(resource, dict):
-        return sum([sub_resource for sub_resource in resource.values()])
-    else:
-        raise AttributeError("Unexpected resource data type")
 
 
 class AoE2GameOverlay(RTSGameOverlay):
@@ -59,31 +42,33 @@ class AoE2GameOverlay(RTSGameOverlay):
 
         self.selected_panel = PanelID.CONFIG  # panel to display
 
-        # game parameters
-        print('Loading parameters and last game data from aoe2.net...')
-        self.store_game_parameters = []  # used for url requests in parallel thread
-        self.game_parameters = get_aoe2_parameters(timeout=self.settings.url_timeout)
-
-        if self.game_parameters is not None:
-            print('Info from aoe2.net loaded.')
-        else:
-            print('Could not load info from aoe2.net.')
-            if len(self.store_game_parameters) == 0:
-                get_aoe2_parameters_threading(self.store_game_parameters, timeout=self.settings.url_timeout)
-
         # match data
         self.match_data_thread_started = False  # True after the first call to 'get_match_data_threading'
         self.store_match_data = []  # used for url requests in parallel thread
         self.match_data = None  # match data to use
         self.match_data_warnings = []  # warnings related to match data not found
-
         self.match_data_thread_id = None
         self.match_data_stop_flag = Event()
-        if (self.game_parameters is not None) and (self.selected_username is not None):
-            self.match_data_thread_id = get_match_data_threading(
-                self.store_match_data, stop_event=self.match_data_stop_flag, search_input=self.selected_username,
-                aoe2_parameters=self.game_parameters, timeout=self.settings.url_timeout)
-            self.match_data_thread_started = True
+
+        # initialize build orders if folder does not exist and copy the samples
+        self.sample_directory_build_orders = os.path.join(self.directory_main, 'build_orders', self.name_game)
+        if not os.path.isdir(self.directory_build_orders):
+            os.makedirs(self.directory_build_orders, exist_ok=True)  # create directory
+
+            # copy files
+            for file_name in os.listdir(self.sample_directory_build_orders):
+                source = os.path.join(self.sample_directory_build_orders, file_name)
+                destination = os.path.join(self.directory_build_orders, file_name)
+                if os.path.isfile(source):
+                    shutil.copy(source, destination)
+
+            # load build orders
+            self.build_orders = get_build_orders(self.directory_build_orders, self.check_valid_build_order,
+                                                 category_name=self.build_order_category_name)
+
+            # display popup message
+            popup_message('AoE2 build orders initialization',
+                          f'AoE2 sample build orders copied in {self.directory_build_orders}.')
 
         self.update_panel_elements()  # update the current panel elements
 
@@ -96,18 +81,9 @@ class AoE2GameOverlay(RTSGameOverlay):
         """
         super().reload(update_settings=update_settings)
 
-        # game parameters
-        print('Reloading parameters and last game data from aoe2.net...')
+        # game match data
         self.match_data = None  # match data to use
         self.match_data_warnings = []  # warnings related to match data not found
-        self.game_parameters = get_aoe2_parameters(timeout=self.settings.url_timeout)
-
-        if self.game_parameters is not None:
-            print('Info from aoe2.net reloaded.')
-        else:
-            print('Could not reload info from aoe2.net.')
-            if len(self.store_game_parameters) == 0:
-                get_aoe2_parameters_threading(self.store_game_parameters, timeout=self.settings.url_timeout)
 
         self.update_panel_elements()  # update the current panel elements
 
@@ -171,6 +147,9 @@ class AoE2GameOverlay(RTSGameOverlay):
     def next_panel(self):
         """Select the next panel"""
 
+        # clear tooltip
+        self.build_order_tooltip.clear()
+
         # saving the upper right corner position
         if self.selected_panel == PanelID.CONFIG:
             self.save_upper_right_position()
@@ -178,7 +157,10 @@ class AoE2GameOverlay(RTSGameOverlay):
         if self.selected_panel == PanelID.CONFIG:
             self.selected_panel = PanelID.BUILD_ORDER
         elif self.selected_panel == PanelID.BUILD_ORDER:
-            self.selected_panel = PanelID.MATCH_DATA
+            if is_valid_fetch_match_data(self.settings.fetch_match_data):
+                self.selected_panel = PanelID.MATCH_DATA
+            else:
+                self.selected_panel = PanelID.CONFIG
         elif self.selected_panel == PanelID.MATCH_DATA:
             self.selected_panel = PanelID.CONFIG
 
@@ -190,7 +172,7 @@ class AoE2GameOverlay(RTSGameOverlay):
         self.update_panel_elements()  # update the elements of the panel to display
         self.update_position()  # restoring the upper right corner position
 
-    def get_age_image(self, age_id: int):
+    def get_age_image(self, age_id: int) -> str:
         """Get the image for a requested age
 
         Parameters
@@ -227,6 +209,8 @@ class AoE2GameOverlay(RTSGameOverlay):
         self.config_quit_button.show()
         self.config_save_button.show()
         self.config_reload_button.show()
+        self.config_hotkey_button.show()
+        self.config_build_order_button.show()
         self.font_size_input.show()
         self.scaling_input.show()
         self.next_panel_button.show()
@@ -238,10 +222,6 @@ class AoE2GameOverlay(RTSGameOverlay):
         self.username_title.show()
         self.username_search.show()
         self.username_selection.show()
-
-        # adjust the size of the elements
-        self.build_order_search.adjustSize()
-        self.username_search.adjustSize()
 
         # configuration buttons
         layout = self.settings.layout
@@ -257,6 +237,10 @@ class AoE2GameOverlay(RTSGameOverlay):
         self.config_save_button.move(next_x, border_size)
         next_x += action_button_size + action_button_spacing
         self.config_reload_button.move(next_x, border_size)
+        next_x += action_button_size + action_button_spacing
+        self.config_hotkey_button.move(next_x, border_size)
+        next_x += action_button_size + action_button_spacing
+        self.config_build_order_button.move(next_x, border_size)
         next_x += action_button_size + horizontal_spacing
         self.font_size_input.move(next_x, border_size)
         next_x += self.font_size_input.width() + horizontal_spacing
@@ -313,7 +297,7 @@ class AoE2GameOverlay(RTSGameOverlay):
         if (self.selected_panel == PanelID.BUILD_ORDER) and super().build_order_next_step():
             self.update_build_order()  # update the rendering
 
-    def select_build_order_id(self, build_order_id: int = -1):
+    def select_build_order_id(self, build_order_id: int = -1) -> bool:
         """Select build order ID
 
         Parameters
@@ -357,6 +341,8 @@ class AoE2GameOverlay(RTSGameOverlay):
             target_food = get_total_on_resource(target_resources['food'])
             target_gold = get_total_on_resource(target_resources['gold'])
             target_stone = get_total_on_resource(target_resources['stone'])
+            target_builder = get_total_on_resource(target_resources['builder']) if (
+                    'builder' in target_resources) else -1
             target_villager = selected_step['villager_count']
 
             # space between the resources
@@ -377,6 +363,8 @@ class AoE2GameOverlay(RTSGameOverlay):
             resources_line += spacing + '@' + images.gold + '@ ' + (str(target_gold) if (target_gold >= 0) else ' ')
             resources_line += spacing + '@' + images.stone + '@ ' + (
                 str(target_stone) if (target_stone >= 0) else ' ')
+            if target_builder > 0:  # add builders count if indicated
+                resources_line += spacing + '@' + images.builder + '@ ' + str(target_builder)
             if target_villager >= 0:
                 resources_line += spacing + '@' + images.villager + '@ ' + str(target_villager)
             if 1 <= selected_step['age'] <= 4:
@@ -384,12 +372,11 @@ class AoE2GameOverlay(RTSGameOverlay):
             if 'time' in selected_step:  # add time if indicated
                 resources_line += '@' + spacing + '@' + self.settings.images.time + '@' + selected_step['time']
 
-            # For dict type target_resource, create a tooltip associate with the resource icon
-            mapping = {"wood": images.wood, "food": images.food, "gold": images.gold, "stone": images.stone}
+            # for dict type target_resources, create a tooltip to associate with the resource icon
+            mapping = {'wood': images.wood, 'food': images.food, 'gold': images.gold, 'stone': images.stone}
             tooltip = dict((mapping[key], value) for (key, value) in target_resources.items() if type(value) is dict)
-            self.build_order_resources.add_row_from_picture_line(parent=self,
-                                                                 line=str(resources_line),
-                                                                 tooltips=tooltip)
+            self.build_order_resources.add_row_from_picture_line(
+                parent=self, line=str(resources_line), tooltips=tooltip)
 
             # notes of the current step
             notes = selected_step['notes']
@@ -464,8 +451,7 @@ class AoE2GameOverlay(RTSGameOverlay):
 
     def fetch_game_match_data(self):
         """Fetch the game match data"""
-        # only available if valid game parameters and valid username
-        if (self.game_parameters is not None) and (self.selected_username is not None):
+        if self.selected_username is not None:  # only available if valid username
             # new tread call can be launched
             if (not self.match_data_thread_started) or (len(self.store_match_data) >= 1):
 
@@ -479,56 +465,58 @@ class AoE2GameOverlay(RTSGameOverlay):
                     self.store_match_data.clear()
 
                 # launch new thread search
-                if self.match_data is None:
-                    self.match_data_thread_id = get_match_data_threading(
-                        self.store_match_data, stop_event=self.match_data_stop_flag,
-                        search_input=self.selected_username, aoe2_parameters=self.game_parameters,
-                        timeout=self.settings.url_timeout)
-                    self.match_data_thread_started = True
+                if is_valid_fetch_match_data(self.settings.fetch_match_data):
+                    if self.match_data is None:
+                        self.match_data_thread_id = get_match_data_threading(
+                            self.settings.fetch_match_data, self.store_match_data, stop_event=self.match_data_stop_flag,
+                            search_input=self.selected_username, timeout=self.settings.url_timeout)
+                    else:
+                        self.match_data_thread_id = get_match_data_threading(
+                            self.settings.fetch_match_data, self.store_match_data, stop_event=self.match_data_stop_flag,
+                            search_input=self.selected_username, timeout=self.settings.url_timeout,
+                            last_match_id=self.match_data.match_id, last_data_found=self.match_data.all_data_found)
                 else:
-                    self.match_data_thread_id = get_match_data_threading(
-                        self.store_match_data, stop_event=self.match_data_stop_flag,
-                        search_input=self.selected_username, aoe2_parameters=self.game_parameters,
-                        timeout=self.settings.url_timeout,
-                        last_match_id=self.match_data.match_id, last_data_found=self.match_data.all_data_found)
-                    self.match_data_thread_started = True
-        elif self.game_parameters is None:  # retry to load the game parameters
-            if len(self.store_game_parameters) >= 1:  # last url calls are done
-                self.game_parameters = self.store_game_parameters[0]
-                self.store_game_parameters.clear()
+                    self.match_data_thread_id = None
 
-                if self.game_parameters is not None:
-                    print('Info from aoe2.net loaded.')
-                else:
-                    print('Could not load info from aoe2.net.')
-                    # launch new game parameters fetching
-                    get_aoe2_parameters_threading(self.store_game_parameters, timeout=self.settings.url_timeout)
+                self.match_data_thread_started = True
 
     def update_match_data_display(self):
         """Display match data panel"""
         self.match_data_display.clear()
 
-        if self.game_parameters is None:  # game parameters not found
-            line = f'https://aoe2.net: Game parameters could not be loaded.'
-            self.match_data_display.add_row_from_picture_line(parent=self, line=line)
-            self.match_data_display.add_row_from_picture_line(parent=self, line='https://aoe2.net is maybe down.')
+        if self.selected_username is None:
+            self.match_data_display.add_row_from_picture_line(
+                parent=self, line='No username provided to find match data.')
+
+        elif self.match_data_thread_id is None:  # match data search not started
+            self.match_data_display.add_row_from_picture_line(
+                parent=self, line='Match data search not yet started.')
+
         elif self.match_data is None:  # user match data not found
-            if self.selected_username is None:
-                self.match_data_display.add_row_from_picture_line(
-                    parent=self, line='No username provided to find match data.')
-            else:
-                self.match_data_display.add_row_from_picture_line(
-                    parent=self, line=f'https://aoe2.net: No match found (yet) for {self.selected_username}.')
-                for warning_comment in self.match_data_warnings:
-                    self.match_data_display.add_row_from_picture_line(parent=self, line=warning_comment)
+            self.match_data_display.add_row_from_picture_line(
+                parent=self, line=f'No match found (yet) for \'{self.selected_username}\'.')
+            for warning_comment in self.match_data_warnings:
+                self.match_data_display.add_row_from_picture_line(parent=self, line=warning_comment)
+
         else:  # valid match available
-            single_elo_show = False  # check if single ELO must be shown (at least one player has it on team game)
+            # check if some columns must be shown (available for one player or more)
+            country_show = False  # check if country flags must be shown
+            single_elo_show = False  # check if single ELO must be shown
+            win_loss_show = False  # check if wins and losses must be shown
             for cur_player in self.match_data.players:
+                if cur_player.country is not None:
+                    country_show = True
                 if cur_player.elo_solo is not None:
                     single_elo_show = True
-                    break
+                if cur_player.win_rate is not None:
+                    win_loss_show = True
 
+            # color for the ELO
             layout_match_data = self.settings.layout.match_data  # settings of the match data layout
+            color_elo = layout_match_data.color_elo if win_loss_show else layout_match_data.color_elo_no_win_loss
+            color_elo_solo = layout_match_data.color_elo_solo if win_loss_show else \
+                layout_match_data.color_elo_solo_no_win_loss
+
             max_length = layout_match_data.match_data_max_length  # max length of the data to display
 
             # separation spaces between elements
@@ -563,7 +551,7 @@ class AoE2GameOverlay(RTSGameOverlay):
             if single_elo_show:
                 title_line += separation + 'Solo'
                 title_labels_settings.append(None)
-                title_labels_settings.append(QLabelSettings(text_color=layout_match_data.color_elo_solo, text_bold=True,
+                title_labels_settings.append(QLabelSettings(text_color=color_elo_solo, text_bold=True,
                                                             text_alignment='center'))
 
             # game type ELO
@@ -573,7 +561,7 @@ class AoE2GameOverlay(RTSGameOverlay):
                 title_line += separation + 'Elo'
             title_labels_settings.append(None)
             title_labels_settings.append(
-                QLabelSettings(text_color=layout_match_data.color_elo, text_bold=True, text_alignment='center'))
+                QLabelSettings(text_color=color_elo, text_bold=True, text_alignment='center'))
 
             # player rank
             title_line += separation + 'Rank'
@@ -582,24 +570,28 @@ class AoE2GameOverlay(RTSGameOverlay):
                 QLabelSettings(text_color=layout_match_data.color_rank, text_bold=True, text_alignment='center'))
 
             # player win rate
-            title_line += separation + 'Win%'
-            title_labels_settings.append(None)
-            title_labels_settings.append(
-                QLabelSettings(text_color=layout_match_data.color_win_rate, text_bold=True, text_alignment='center'))
+            if win_loss_show:
+                title_line += separation + 'Win%'
+                title_labels_settings.append(None)
+                title_labels_settings.append(
+                    QLabelSettings(text_color=layout_match_data.color_win_rate, text_bold=True,
+                                   text_alignment='center'))
 
             # player wins
-            title_line += separation + 'Win'
-            title_labels_settings.append(None)
-            title_labels_settings.append(
-                QLabelSettings(text_color=layout_match_data.color_wins, text_bold=True, text_alignment='center'))
+            if win_loss_show:
+                title_line += separation + 'Win'
+                title_labels_settings.append(None)
+                title_labels_settings.append(
+                    QLabelSettings(text_color=layout_match_data.color_wins, text_bold=True, text_alignment='center'))
 
             # player losses
-            title_line += separation + 'Loss'
-            title_labels_settings.append(None)
-            title_labels_settings.append(
-                QLabelSettings(text_color=layout_match_data.color_losses, text_bold=True, text_alignment='center'))
+            if win_loss_show:
+                title_line += separation + 'Loss'
+                title_labels_settings.append(None)
+                title_labels_settings.append(
+                    QLabelSettings(text_color=layout_match_data.color_losses, text_bold=True, text_alignment='center'))
 
-            # country flag
+            # next panel (+ optional country flag)
             title_line += separation + ' '
             title_labels_settings.append(None)
             title_labels_settings.append(None)
@@ -671,11 +663,11 @@ class AoE2GameOverlay(RTSGameOverlay):
                     if cur_player.elo_solo is not None:
                         player_line += separation + str(cur_player.elo_solo)
                         player_labels_settings.append(
-                            QLabelSettings(text_color=layout_match_data.color_elo_solo, text_alignment='right'))
+                            QLabelSettings(text_color=color_elo_solo, text_alignment='right'))
                     else:
                         player_line += separation + '-'
                         player_labels_settings.append(
-                            QLabelSettings(text_color=layout_match_data.color_elo_solo, text_alignment='center'))
+                            QLabelSettings(text_color=color_elo_solo, text_alignment='center'))
 
                 # game type ELO
                 if cur_player.elo is not None:
@@ -684,7 +676,7 @@ class AoE2GameOverlay(RTSGameOverlay):
                     player_line += separation + '-'
                 player_labels_settings.append(None)
                 player_labels_settings.append(
-                    QLabelSettings(text_color=layout_match_data.color_elo, text_alignment='right'))
+                    QLabelSettings(text_color=color_elo, text_alignment='right'))
 
                 # player rank
                 if cur_player.rank is not None:
@@ -696,42 +688,51 @@ class AoE2GameOverlay(RTSGameOverlay):
                     QLabelSettings(text_color=layout_match_data.color_rank, text_alignment='right'))
 
                 # player win rate
-                if cur_player.win_rate is not None:
-                    player_line += separation + str(cur_player.win_rate) + '%'
-                else:
-                    player_line += separation + '-'
-                player_labels_settings.append(None)
-                player_labels_settings.append(
-                    QLabelSettings(text_color=layout_match_data.color_win_rate, text_alignment='right'))
+                if win_loss_show:
+                    if cur_player.win_rate is not None:
+                        player_line += separation + str(cur_player.win_rate) + '%'
+                    else:
+                        player_line += separation + '-'
+                    player_labels_settings.append(None)
+                    player_labels_settings.append(
+                        QLabelSettings(text_color=layout_match_data.color_win_rate, text_alignment='right'))
 
                 # player wins
-                if cur_player.wins is not None:
-                    player_line += separation + str(cur_player.wins)
-                else:
-                    player_line += separation + '-'
-                player_labels_settings.append(None)
-                player_labels_settings.append(
-                    QLabelSettings(text_color=layout_match_data.color_wins, text_alignment='right'))
+                if win_loss_show:
+                    if cur_player.wins is not None:
+                        player_line += separation + str(cur_player.wins)
+                    else:
+                        player_line += separation + '-'
+                    player_labels_settings.append(None)
+                    player_labels_settings.append(
+                        QLabelSettings(text_color=layout_match_data.color_wins, text_alignment='right'))
 
                 # player losses
-                if cur_player.losses is not None:
-                    player_line += separation + str(cur_player.losses)
-                else:
-                    player_line += separation + '-'
-                player_labels_settings.append(None)
-                player_labels_settings.append(
-                    QLabelSettings(text_color=layout_match_data.color_losses, text_alignment='right'))
+                if win_loss_show:
+                    if cur_player.losses is not None:
+                        player_line += separation + str(cur_player.losses)
+                    else:
+                        player_line += separation + '-'
+                    player_labels_settings.append(None)
+                    player_labels_settings.append(
+                        QLabelSettings(text_color=layout_match_data.color_losses, text_alignment='right'))
 
                 # country flag
-                flag_name = cur_player.country if (cur_player.country is not None) else 'unknown'
-                country_flag_image = os.path.join(self.directory_common_pictures, 'national_flag',
-                                                  f'{flag_name.lower()}.png')
-                player_line += separation + f'national_flag/{flag_name.lower()}.png' if os.path.isfile(
-                    country_flag_image) else flag_name
                 player_labels_settings.append(None)
-                player_labels_settings.append(QLabelSettings(image_width=layout_match_data.flag_width,
-                                                             image_height=layout_match_data.flag_height,
-                                                             text_alignment='center'))
+                if country_show:
+                    flag_name = cur_player.country if (cur_player.country is not None) else 'unknown'
+                    country_flag_image = os.path.join(self.directory_common_pictures, 'national_flag',
+                                                      f'{flag_name.lower()}.png')
+                    player_line += separation + f'national_flag/{flag_name.lower()}.png' if os.path.isfile(
+                        country_flag_image) else flag_name
+                    player_labels_settings.append(QLabelSettings(image_width=layout_match_data.flag_width,
+                                                                 image_height=layout_match_data.flag_height,
+                                                                 text_alignment='center'))
+                else:
+                    player_line += separation
+                    for i in range(layout_match_data.flag_space_no_country):
+                        player_line += ' '
+                    player_labels_settings.append(None)
 
                 # display player line
                 self.match_data_display.add_row_from_picture_line(parent=self, line=player_line,
@@ -751,7 +752,7 @@ class AoE2GameOverlay(RTSGameOverlay):
         border_size = self.match_data_display.border_size
 
         width = 2 * border_size + self.match_data_display.row_max_width
-        if (self.game_parameters is None) or (self.match_data is None):  # increase size for the next frame button
+        if self.match_data is None:  # increase size for the next frame button
             width += self.settings.layout.horizontal_spacing + self.settings.layout.action_button_size
 
         self.resize(width, 2 * border_size + self.match_data_display.row_total_height)
@@ -771,12 +772,22 @@ class AoE2GameOverlay(RTSGameOverlay):
                 self.config_quit_button.hovering_show(self.is_mouse_in_roi_widget)
                 self.config_save_button.hovering_show(self.is_mouse_in_roi_widget)
                 self.config_reload_button.hovering_show(self.is_mouse_in_roi_widget)
+                self.config_hotkey_button.hovering_show(self.is_mouse_in_roi_widget)
+                self.config_build_order_button.hovering_show(self.is_mouse_in_roi_widget)
 
             elif self.selected_panel == PanelID.BUILD_ORDER:  # build order specific buttons
                 self.build_order_previous_button.hovering_show(self.is_mouse_in_roi_widget)
                 self.build_order_next_button.hovering_show(self.is_mouse_in_roi_widget)
                 self.reminder_checkbox.hovering_show(self.is_mouse_in_roi_widget)
-                self.build_order_resources.hover_tooltip(self.mouse_x - self.x(), self.mouse_y - self.y(), self)
+
+                # tooltip display
+                if not self.build_order_tooltip.is_visible():  # no build order tooltip still active
+                    tooltip, label_x, label_y = self.build_order_resources.get_hover_tooltip(
+                        0, self.mouse_x - self.x(), self.mouse_y - self.y())
+                    if tooltip is not None:  # valid tooltip to display
+                        self.build_order_tooltip.display_dictionary(
+                            tooltip, self.x() + label_x, self.y() + label_y,
+                            self.settings.layout.build_order.tooltip_timeout)
 
     def timer_match_data_call(self):
         """Function called on a timer (related to match data)"""

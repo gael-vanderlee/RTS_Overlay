@@ -1,7 +1,7 @@
 class SettingsSubclass:
     """Settings for a subclass"""
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Convert content to dictionary
 
         Returns
@@ -26,5 +26,5 @@ class SettingsSubclass:
                 attribute = getattr(self, key)
                 if isinstance(attribute, SettingsSubclass):
                     attribute.from_dict(data[key])
-                else:
+                elif type(attribute) == type(data[key]):
                     setattr(self, key, data[key])

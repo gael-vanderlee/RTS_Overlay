@@ -1,43 +1,280 @@
 import os
 import json
+import appdirs
+import webbrowser
+import subprocess
 from copy import deepcopy
-from pynput import keyboard
-
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QShortcut, QLineEdit
-from PyQt5.QtWidgets import QWidget, QMessageBox, QComboBox, QDesktopWidget
-from PyQt5.QtGui import QKeySequence, QFont, QIcon, QCursor
-from PyQt5.QtCore import Qt, QPoint, QSize
-
-from common.build_order_tools import get_build_orders
-from common.label_display import MultiQLabelDisplay, QLabelSettings
-from common.useful_tools import TwinHoverButton, scale_int, scale_list_int, Checkbox
-
 from thefuzz import process
 
+from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QShortcut, QLineEdit, QPushButton
+from PyQt5.QtWidgets import QWidget, QComboBox, QDesktopWidget, QTextEdit, QCheckBox
+from PyQt5.QtGui import QKeySequence, QFont, QIcon, QCursor, QPixmap
+from PyQt5.QtCore import Qt, QPoint, QSize
 
-def check_build_order_key_values(build_order: dict, key_condition: dict = None):
-    """Check if a build order fulfills the correct key conditions
+from common.build_order_tools import get_build_orders, check_build_order_key_values, is_build_order_new
+from common.label_display import MultiQLabelDisplay, QLabelSettings, MultiQLabelWindow
+from common.useful_tools import TwinHoverButton, scale_int, scale_list_int, set_background_opacity, \
+    OverlaySequenceEdit, widget_x_end, widget_y_end, popup_message, Checkbox
+from common.keyboard_mouse import KeyboardMouseManagement
+from common.rts_settings import RTSHotkeys, KeyboardMouse
 
-    Parameters
-    ----------
-    build_order      build order to check
-    key_condition    dictionary with the keys to look for and their value (to consider as valid), None to skip it
 
-    Returns
-    -------
-    True if no key condition or key conditions are correct
-    """
-    if key_condition is None:  # no key condition to check
-        return True
+class HotkeysWindow(QMainWindow):
+    """Window to configure the hotkeys"""
 
-    for key, value in key_condition.items():  # loop  on the key conditions
-        if key in build_order:
-            data_check = build_order[key]
-            is_list = isinstance(data_check, list)
-            if (is_list and (value not in data_check)) or ((not is_list) and (value != data_check)):
-                return False  # at least on key condition not met
+    def __init__(self, parent, hotkeys: RTSHotkeys, game_icon: str, mouse_image: str, mouse_height: int,
+                 settings_folder: str, font_police: str, font_size: int, color_font: list, color_background: list,
+                 opacity: float, border_size: int, edit_width: int, edit_height: int, button_margin: int,
+                 vertical_spacing: int, section_vertical_spacing: int, horizontal_spacing: int, mouse_spacing: int,
+                 manual_text: str):
+        """Constructor
 
-    return True  # all conditions met
+        Parameters
+        ----------
+        parent                      parent window
+        hotkeys                     hotkeys current definition
+        game_icon                   icon of the game
+        mouse_image                 image for the mouse
+        mouse_height                height for the mouse image
+        settings_folder             folder with the settings file
+        font_police                 font police type
+        font_size                   font size
+        color_font                  color of the font
+        color_background            color of the background
+        opacity                     opacity of the window
+        border_size                 size of the borders
+        edit_width                  width for the hotkeys edit fields
+        edit_height                 height for the hotkeys edit fields
+        button_margin               margin from text to button border
+        vertical_spacing            vertical spacing between the elements
+        section_vertical_spacing    vertical spacing between the sections
+        horizontal_spacing          horizontal spacing between the elements
+        mouse_spacing               horizontal spacing between the field and the mouse icon
+        manual_text                 text for the manual describing how to setup the hotkeys
+        """
+        super().__init__()
+        self.parent = parent
+
+        # description for the different hotkeys
+        self.descriptions = {
+            'next_panel': 'Move to next panel :',
+            'show_hide': 'Show/hide overlay :',
+            'build_order_previous_step': 'Go to previous BO step :',
+            'build_order_next_step': 'Go to next BO step :'
+        }
+        for description in self.descriptions:
+            assert description in parent.hotkey_names
+
+        # style to apply on the different parts
+        style_description = f'color: rgb({color_font[0]}, {color_font[1]}, {color_font[2]})'
+        style_sequence_edit = 'QWidget{' + style_description + '; border: 1px solid white}'
+        style_button = 'QWidget{' + style_description + '; border: 1px solid white; padding: ' + str(
+            button_margin) + 'px}'
+
+        # manual
+        manual_label = QLabel(manual_text, self)
+        manual_label.setFont(QFont(font_police, font_size))
+        manual_label.setStyleSheet(style_description)
+        manual_label.adjustSize()
+        manual_label.move(border_size, border_size)
+        y_hotkeys = widget_y_end(manual_label) + section_vertical_spacing  # vertical position for hotkeys
+        max_width = widget_x_end(manual_label)
+
+        # labels display (descriptions)
+        count = 0
+        y_buttons = y_hotkeys  # vertical position for the buttons
+        line_height = edit_height + vertical_spacing
+        first_column_max_width = 0
+        for description in self.descriptions.values():
+            label = QLabel(description, self)
+            label.setFont(QFont(font_police, font_size))
+            label.setStyleSheet(style_description)
+            label.adjustSize()
+            label.move(border_size, y_hotkeys + count * line_height)
+            first_column_max_width = max(first_column_max_width, widget_x_end(label))
+            y_buttons = widget_y_end(label) + section_vertical_spacing
+            count += 1
+
+        # button to open settings folder
+        self.folder_button = QPushButton('Open settings folder', self)
+        self.folder_button.setFont(QFont(font_police, font_size))
+        self.folder_button.setStyleSheet(style_button)
+        self.folder_button.adjustSize()
+        self.folder_button.move(border_size, y_buttons)
+        self.folder_button.clicked.connect(lambda: subprocess.run(['explorer', settings_folder]))
+        self.folder_button.show()
+        first_column_max_width = max(first_column_max_width, widget_x_end(self.folder_button))
+
+        # mouse dictionaries
+        self.mouse_to_field = {'left': 'L', 'middle': 'M', 'right': 'R', 'x': '1', 'x2': '2'}
+        self.field_to_mouse = {v: k for k, v in self.mouse_to_field.items()}
+
+        # hotkeys edit fields
+        count = 0
+        x_hotkey = first_column_max_width + horizontal_spacing  # horizontal position for the hotkey fields
+        self.hotkeys = {}  # storing the hotkeys
+        self.mouse_checkboxes = {}  # storing the mouse checkboxes
+        for key in self.descriptions.keys():
+            hotkey = OverlaySequenceEdit(self)
+
+            valid_mouse_input = False  # check if valid mouse input provided
+            if hasattr(hotkeys, key):
+                value = getattr(hotkeys, key)
+                if isinstance(value, KeyboardMouse):
+                    valid_mouse_input = value.mouse in self.mouse_to_field
+                    if (value.keyboard != '') and valid_mouse_input:
+                        hotkey.setKeySequence(value.keyboard + '+' + self.mouse_to_field[value.mouse])
+                    elif value.keyboard != '':
+                        hotkey.setKeySequence(value.keyboard)
+                    elif valid_mouse_input:
+                        hotkey.setKeySequence(self.mouse_to_field[value.mouse])
+
+            hotkey.setFont(QFont(font_police, font_size))
+            hotkey.setStyleSheet(style_sequence_edit)
+            hotkey.resize(edit_width, edit_height)
+            hotkey.move(x_hotkey, y_hotkeys + count * line_height)
+            hotkey.setToolTip('Click to edit, then input hotkey combination.')
+            hotkey.show()
+            self.hotkeys[key] = hotkey
+
+            # icon for the mouse
+            mouse_icon = QLabel('', self)
+            mouse_icon.setPixmap(QPixmap(mouse_image).scaledToHeight(mouse_height, mode=Qt.SmoothTransformation))
+            mouse_icon.adjustSize()
+            mouse_icon.move(widget_x_end(hotkey) + mouse_spacing, hotkey.y())
+            mouse_icon.show()
+
+            # checkbox for the mouse
+            mouse_checkbox = QCheckBox('', self)
+            mouse_checkbox.setChecked(valid_mouse_input)
+            mouse_checkbox.adjustSize()
+            mouse_checkbox.move(widget_x_end(mouse_icon) + horizontal_spacing, hotkey.y())
+            mouse_checkbox.show()
+            max_width = max(max_width, widget_x_end(mouse_checkbox))
+            self.mouse_checkboxes[key] = mouse_checkbox
+
+            count += 1
+
+        # send update button
+        self.update_button = QPushButton("Update hotkeys", self)
+        self.update_button.setFont(QFont(font_police, font_size))
+        self.update_button.setStyleSheet(style_button)
+        self.update_button.adjustSize()
+        self.update_button.move(x_hotkey, self.folder_button.y())
+        self.update_button.clicked.connect(parent.update_hotkeys)
+        self.update_button.show()
+        max_width = max(max_width, widget_x_end(self.update_button))
+
+        # window properties and show
+        self.setWindowTitle('Configure hotkeys')
+        self.setWindowIcon(QIcon(game_icon))
+        self.resize(max_width + border_size, widget_y_end(self.update_button) + border_size)
+        set_background_opacity(self, color_background, opacity)
+        self.show()
+
+    def closeEvent(self, _):
+        """Called when clicking on the cross icon (closing window icon)"""
+        self.parent.keyboard_mouse.set_all_flags(False)
+        super().close()
+
+
+class BuildOrderWindow(QMainWindow):
+    """Window to add a new build order"""
+
+    def __init__(self, parent, game_icon: str, build_order_folder: str, font_police: str, font_size: int,
+                 color_font: list, color_background: list, opacity: float, border_size: int,
+                 edit_width: int, edit_height: int, edit_init_text: str, button_margin: int,
+                 vertical_spacing: int, horizontal_spacing: int, build_order_website: list):
+        """Constructor
+
+        Parameters
+        ----------
+        parent                 parent window
+        game_icon              icon of the game
+        build_order_folder     folder where the build orders are saved
+        font_police            font police type
+        font_size              font size
+        color_font             color of the font
+        color_background       color of the background
+        opacity                opacity of the window
+        border_size            size of the borders
+        edit_width             width for the build order text input
+        edit_height            height for the build order text input
+        edit_init_text         initial text for the build order text input
+        button_margin          margin from text to button border
+        vertical_spacing       vertical spacing between the elements
+        horizontal_spacing     horizontal spacing between the elements
+        build_order_website    list of 2 website elements [button name, website link], empty otherwise
+        """
+        super().__init__()
+
+        # style to apply on the different parts
+        style_description = f'color: rgb({color_font[0]}, {color_font[1]}, {color_font[2]})'
+        style_text_edit = 'QWidget{' + style_description + '; border: 1px solid white}'
+        style_button = 'QWidget{' + style_description + '; border: 1px solid white; padding: ' + str(
+            button_margin) + 'px}'
+
+        # text input for the build order
+        self.text_input = QTextEdit(self)
+        self.text_input.setPlainText(edit_init_text)
+        self.text_input.setFont(QFont(font_police, font_size))
+        self.text_input.setStyleSheet(style_text_edit)
+        self.text_input.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.text_input.resize(edit_width, edit_height)
+        self.text_input.move(border_size, border_size)
+        self.text_input.show()
+        max_width = border_size + self.text_input.width()
+
+        # button to add build order
+        self.update_button = QPushButton('Add build order', self)
+        self.update_button.setFont(QFont(font_police, font_size))
+        self.update_button.setStyleSheet(style_button)
+        self.update_button.adjustSize()
+        self.update_button.move(border_size, border_size + self.text_input.height() + vertical_spacing)
+        self.update_button.clicked.connect(parent.add_build_order)
+        self.update_button.show()
+
+        # button to open build order folder
+        self.folder_button = QPushButton('Open build orders folder', self)
+        self.folder_button.setFont(QFont(font_police, font_size))
+        self.folder_button.setStyleSheet(style_button)
+        self.folder_button.adjustSize()
+        self.folder_button.move(
+            widget_x_end(self.update_button) + horizontal_spacing, self.update_button.y())
+        self.folder_button.clicked.connect(lambda: subprocess.run(['explorer', build_order_folder]))
+        self.folder_button.show()
+        max_width = max(max_width, widget_x_end(self.folder_button))
+
+        # open build order website
+        self.website_link = None
+        if len(build_order_website) == 2:
+            assert isinstance(build_order_website[0], str) and isinstance(build_order_website[1], str)
+            self.website_link = build_order_website[1]
+            self.website_button = QPushButton(build_order_website[0], self)
+            self.website_button.setFont(QFont(font_police, font_size))
+            self.website_button.setStyleSheet(style_button)
+            self.website_button.adjustSize()
+            self.website_button.move(
+                widget_x_end(self.folder_button) + horizontal_spacing, self.folder_button.y())
+            self.website_button.clicked.connect(self.open_website)
+            self.website_button.show()
+            max_width = max(max_width, widget_x_end(self.website_button))
+
+        # window properties and show
+        self.setWindowTitle('New build order')
+        self.setWindowIcon(QIcon(game_icon))
+        self.resize(max_width + border_size, widget_y_end(self.update_button) + border_size)
+        set_background_opacity(self, color_background, opacity)
+        self.show()
+
+    def open_website(self):
+        """Open the build order website"""
+        if self.website_link is not None:
+            webbrowser.open(self.website_link)
+
+    def closeEvent(self, _):
+        """Called when clicking on the cross icon (closing window icon)"""
+        super().close()
 
 
 class RTSGameOverlay(QMainWindow):
@@ -63,16 +300,20 @@ class RTSGameOverlay(QMainWindow):
         self.init_done = False
 
         # directories
+        self.name_game = name_game
         self.directory_main = directory_main  # main file
-        self.directory_build_orders = os.path.join(self.directory_main, 'build_orders', name_game)  # build orders
         self.directory_game_pictures = os.path.join(self.directory_main, 'pictures', name_game)  # game pictures
         self.directory_common_pictures = os.path.join(self.directory_main, 'pictures', 'common')  # common pictures
-        self.directory_audio = os.path.join(self.directory_main, 'audio')  # audio files
+        self.directory_config_rts_overlay = os.path.join(appdirs.user_data_dir(), "RTS_Overlay")  # common configuration
+        self.directory_config_game = os.path.join(self.directory_config_rts_overlay, name_game)  # game configuration
+        self.directory_settings = os.path.join(self.directory_config_game, 'settings')  # settings file
+        self.directory_build_orders = os.path.join(self.directory_config_game, 'build_orders')  # build orders
+        self.directory_audio = os.path.join(self.directory_main, 'audio')
 
         # settings
         self.unscaled_settings = settings_class()
         self.default_settings = deepcopy(self.unscaled_settings)
-        self.settings_file = os.path.join(self.directory_main, settings_name)
+        self.settings_file = os.path.join(self.directory_settings, settings_name)
 
         # check if settings can be loaded from existing file
         if os.path.exists(self.settings_file):  # settings file found
@@ -123,7 +364,8 @@ class RTSGameOverlay(QMainWindow):
         # title and icon
         images = self.settings.images
         self.setWindowTitle(self.settings.title)
-        self.setWindowIcon(QIcon(os.path.join(self.directory_common_pictures, images.game_icon)))
+        self.game_icon = os.path.join(self.directory_common_pictures, images.game_icon)
+        self.setWindowIcon(QIcon(self.game_icon))
 
         # Display panel
         self.hidden = False  # True to hide the window (0 opacity), False to display it
@@ -224,6 +466,16 @@ class RTSGameOverlay(QMainWindow):
             icon=QIcon(os.path.join(self.directory_common_pictures, images.load)),
             button_qsize=action_button_qsize, tooltip='reload settings')
 
+        self.config_hotkey_button = TwinHoverButton(
+            parent=self, click_connect=self.panel_configure_hotkeys,
+            icon=QIcon(os.path.join(self.directory_common_pictures, images.config_hotkeys)),
+            button_qsize=action_button_qsize, tooltip='configure hotkeys')
+
+        self.config_build_order_button = TwinHoverButton(
+            parent=self, click_connect=self.panel_add_build_order,
+            icon=QIcon(os.path.join(self.directory_common_pictures, images.write_build_order)),
+            button_qsize=action_button_qsize, tooltip='add build order')
+
         # build order panel buttons
         self.build_order_previous_button = TwinHoverButton(
             parent=self, click_connect=self.build_order_previous_step,
@@ -249,20 +501,27 @@ class RTSGameOverlay(QMainWindow):
         self.hotkey_next_build_order = QShortcut(QKeySequence(hotkeys.select_next_build_order), self)
         self.hotkey_next_build_order.activated.connect(self.select_build_order_id)
 
-        # pynput listener
-        self.pynput_listener = keyboard.GlobalHotKeys({
-            hotkeys.next_panel: self.set_pynput_next_panel,
-            hotkeys.show_hide: self.set_pynput_show_hide_overlay,
-            hotkeys.build_order_previous_step: self.set_pynput_previous_build_order_step,
-            hotkeys.build_order_next_step: self.set_pynput_next_build_order_step
-        })
-        self.pynput_listener.start()
+        # keyboard and mouse global hotkeys
+        self.hotkey_names = ['next_panel', 'show_hide', 'build_order_previous_step', 'build_order_next_step']
+        self.keyboard_mouse = KeyboardMouseManagement(print_unset=False)
 
-        # pyinput flags
-        self.pynput_next_panel = False  # switch to next panel
-        self.pynput_show_hide_overlay = False  # show/hide overlay
-        self.pynput_previous_build_order_step = False  # select previous step of the build order
-        self.pynput_next_build_order_step = False  # select next step of the build order
+        self.mouse_buttons_dict = dict()  # dictionary as {keyboard_name: mouse_button_name}
+        self.set_keyboard_mouse()
+
+        # build order tooltip
+        layout = self.settings.layout
+        tooltip = layout.build_order_tooltip
+        self.build_order_tooltip = MultiQLabelWindow(
+            font_police=layout.font_police, font_size=layout.font_size, image_height=layout.build_order.image_height,
+            border_size=tooltip.border_size, vertical_spacing=tooltip.vertical_spacing,
+            color_default=tooltip.color_default, color_background=tooltip.color_background, opacity=tooltip.opacity,
+            game_pictures_folder=self.directory_game_pictures, common_pictures_folder=self.directory_common_pictures)
+
+        # configure hotkeys
+        self.panel_config_hotkeys = None
+
+        # add build order
+        self.panel_add_build_order = None
 
         # initialization done
         self.init_done = True
@@ -302,7 +561,8 @@ class RTSGameOverlay(QMainWindow):
         # title and icon
         images = self.settings.images
         self.setWindowTitle(self.settings.title)
-        self.setWindowIcon(QIcon(os.path.join(self.directory_common_pictures, images.game_icon)))
+        self.game_icon = os.path.join(self.directory_common_pictures, images.game_icon)
+        self.setWindowIcon(QIcon(self.game_icon))
 
         # reset build order selection
         print('Reloading the build orders.')
@@ -378,6 +638,12 @@ class RTSGameOverlay(QMainWindow):
         self.config_reload_button.update_icon_size(
             QIcon(os.path.join(self.directory_common_pictures, images.load)), action_button_qsize)
 
+        self.config_hotkey_button.update_icon_size(
+            QIcon(os.path.join(self.directory_common_pictures, images.config_hotkeys)), action_button_qsize)
+
+        self.config_build_order_button.update_icon_size(
+            QIcon(os.path.join(self.directory_common_pictures, images.write_build_order)), action_button_qsize)
+
         # build order panel buttons
         self.build_order_previous_button.update_icon_size(
             QIcon(os.path.join(self.directory_common_pictures, images.build_order_previous_step)), action_button_qsize)
@@ -385,24 +651,69 @@ class RTSGameOverlay(QMainWindow):
         self.build_order_next_button.update_icon_size(
             QIcon(os.path.join(self.directory_common_pictures, images.build_order_next_step)), action_button_qsize)
 
-        # hotkeys
-        hotkeys = self.settings.hotkeys
-        self.hotkey_enter.setKey(QKeySequence(hotkeys.enter))
-        self.hotkey_next_build_order.setKey(QKeySequence(hotkeys.select_next_build_order))
+        # keyboard and mouse global hotkeys
+        self.set_keyboard_mouse()
+
+        # build order tooltip
+        layout = self.settings.layout
+        tooltip = layout.build_order_tooltip
+        self.build_order_tooltip.update_settings(
+            font_police=layout.font_police, font_size=layout.font_size, image_height=layout.build_order.image_height,
+            border_size=tooltip.border_size, vertical_spacing=tooltip.vertical_spacing,
+            color_default=tooltip.color_default, color_background=tooltip.color_background, opacity=tooltip.opacity)
 
         # open popup message
         if update_settings:
-            msg = QMessageBox()
-            msg.setWindowTitle('RTS Overlay - Reload')
             if os.path.exists(self.settings_file):
-                msg.setText(f'Settings reloaded using the parameters from {self.settings_file}.')
+                msg_text = f'Settings reloaded using the parameters from {self.settings_file}.'
             else:
-                msg.setText(f'Settings reloaded with the default values ({self.settings_file} not generated).')
-            msg.setIcon(QMessageBox.Information)
-            msg.exec_()
+                msg_text = f'Settings reloaded with the default values ({self.settings_file} not generated).'
+            popup_message('RTS Overlay - Reload', msg_text)
 
         # re-initialization done
         self.init_done = True
+
+    def set_keyboard_mouse(self):
+        """Set the keyboard and mouse hotkey inputs"""
+
+        # selection keys
+        hotkey_settings = self.unscaled_settings.hotkeys
+        self.hotkey_enter.setKey(QKeySequence(hotkey_settings.enter))
+        self.hotkey_next_build_order.setKey(QKeySequence(hotkey_settings.select_next_build_order))
+
+        self.mouse_buttons_dict.clear()  # clear mouse buttons
+        print('Update hotkeys')
+
+        # loop on all the hotkeys
+        for hotkey_name in self.hotkey_names:
+            if hasattr(hotkey_settings, hotkey_name):
+                value = getattr(hotkey_settings, hotkey_name)
+                if isinstance(value, KeyboardMouse):
+                    # keyboard keys
+                    keyboard_value = value.keyboard
+                    self.keyboard_mouse.update_keyboard_hotkey(hotkey_name, keyboard_value)
+
+                    # mouse buttons
+                    mouse_value = value.mouse
+                    if mouse_value != '':
+                        mouse_button_names = self.keyboard_mouse.mouse_button_names
+                        if mouse_value in mouse_button_names:
+                            assert hotkey_name not in self.mouse_buttons_dict
+                            self.mouse_buttons_dict[hotkey_name] = mouse_value
+                        else:
+                            print(f'Invalid mouse value: {mouse_value} | options: {mouse_button_names}')
+
+                    # print
+                    print_keyboard = 'not-set' if (keyboard_value == '') else keyboard_value
+                    print_mouse = 'not-set' if (mouse_value == '') else mouse_value
+                    print(f'    {hotkey_name}: keyboard:{print_keyboard} | mouse:{print_mouse}')
+                else:
+                    print(f'    KeyboardMouse instance expected for hotkey \'{hotkey_name}\'.')
+            else:
+                print(f'    Hotkey \'{hotkey_name}\' not found.')
+
+        # all flags to not set
+        self.keyboard_mouse.set_all_flags(False)
 
     def font_size_scaling_initialization(self):
         """Font size and scaling combo initialization (common to constructor and reload)"""
@@ -498,9 +809,7 @@ class RTSGameOverlay(QMainWindow):
         color_background = layout.color_background
 
         # color and opacity
-        self.setStyleSheet(
-            f'background-color: rgb({color_background[0]}, {color_background[1]}, {color_background[2]})')
-        self.setWindowOpacity(layout.opacity)
+        set_background_opacity(self, color_background, layout.opacity)
 
         # upper right position
         self.upper_right_position = [layout.upper_right_position[0], layout.upper_right_position[1]]
@@ -541,6 +850,24 @@ class RTSGameOverlay(QMainWindow):
         match_data.flag_height = scale_int(scaling, unscaled_match_data.flag_height)
         match_data.resource_spacing = scale_int(scaling, unscaled_match_data.resource_spacing)
 
+        panel_hotkeys = self.settings.panel_hotkeys
+        unscaled_panel_hotkeys = self.unscaled_settings.panel_hotkeys
+        panel_hotkeys.border_size = scale_int(scaling, unscaled_panel_hotkeys.border_size)
+        panel_hotkeys.edit_width = scale_int(scaling, unscaled_panel_hotkeys.edit_width)
+        panel_hotkeys.edit_height = scale_int(scaling, unscaled_panel_hotkeys.edit_height)
+        panel_hotkeys.button_margin = scale_int(scaling, unscaled_panel_hotkeys.button_margin)
+        panel_hotkeys.vertical_spacing = scale_int(scaling, unscaled_panel_hotkeys.vertical_spacing)
+        panel_hotkeys.horizontal_spacing = scale_int(scaling, unscaled_panel_hotkeys.horizontal_spacing)
+
+        panel_build_order = self.settings.panel_build_order
+        unscaled_panel_build_order = self.unscaled_settings.panel_build_order
+        panel_build_order.border_size = scale_int(scaling, unscaled_panel_build_order.border_size)
+        panel_build_order.edit_width = scale_int(scaling, unscaled_panel_build_order.edit_width)
+        panel_build_order.edit_height = scale_int(scaling, unscaled_panel_build_order.edit_height)
+        panel_build_order.button_margin = scale_int(scaling, unscaled_panel_build_order.button_margin)
+        panel_build_order.vertical_spacing = scale_int(scaling, unscaled_panel_build_order.vertical_spacing)
+        panel_build_order.horizontal_spacing = scale_int(scaling, unscaled_panel_build_order.horizontal_spacing)
+
     def quit_application(self):
         """Quit the application"""
         self.stop_application = True
@@ -552,10 +879,22 @@ class RTSGameOverlay(QMainWindow):
         self.config_quit_button.close()
         self.config_save_button.close()
         self.config_reload_button.close()
+        self.config_hotkey_button.close()
+        self.config_build_order_button.close()
 
         self.next_panel_button.close()
         self.build_order_previous_button.close()
         self.build_order_next_button.close()
+
+        if (self.panel_config_hotkeys is not None) and self.panel_config_hotkeys.isVisible():
+            self.panel_config_hotkeys.close()
+            self.panel_config_hotkeys = None
+
+        if (self.panel_add_build_order is not None) and self.panel_add_build_order.isVisible():
+            self.panel_add_build_order.close()
+            self.panel_add_build_order = None
+
+        self.build_order_tooltip.close()
 
     def font_size_combo_box_change(self, value):
         """Detect when the font size changed
@@ -565,9 +904,18 @@ class RTSGameOverlay(QMainWindow):
         value    ID of the new font size in 'self.font_size_input_combo_ids'
         """
         if self.init_done and (0 <= value < len(self.font_size_input_combo_ids)):
-            self.settings.layout.font_size = self.font_size_input_combo_ids[value]
-            self.unscaled_settings.layout.font_size = self.font_size_input_combo_ids[value]
-            print(f'Font size updated to {self.font_size_input_combo_ids[value]}.')
+            new_font = self.font_size_input_combo_ids[value]
+            # main font size
+            self.settings.layout.font_size = new_font
+            self.unscaled_settings.layout.font_size = new_font
+            # panel to configure the hotkeys
+            self.settings.panel_hotkeys.font_size = new_font
+            self.unscaled_settings.panel_hotkeys.font_size = new_font
+            # panel to input a build order
+            self.settings.panel_build_order.font_size = new_font
+            self.unscaled_settings.panel_build_order.font_size = new_font
+
+            print(f'Font size updated to {new_font}.')
             self.reload(update_settings=False)
 
     def scaling_combo_box_change(self, value):
@@ -583,13 +931,78 @@ class RTSGameOverlay(QMainWindow):
             print(f'Scaling updated to {self.scaling_input_combo_ids[value]}.')
             self.reload(update_settings=False)
 
+    def panel_configure_hotkeys(self):
+        """Open/close the panel to configure the hotkeys"""
+        if (self.panel_config_hotkeys is not None) and self.panel_config_hotkeys.isVisible():  # close panel
+            self.panel_config_hotkeys.close()
+            self.panel_config_hotkeys = None
+            self.keyboard_mouse.set_all_flags(False)
+        else:  # open new panel
+            config = self.settings.panel_hotkeys
+            self.panel_config_hotkeys = HotkeysWindow(
+                parent=self, hotkeys=self.unscaled_settings.hotkeys, game_icon=self.game_icon,
+                mouse_image=os.path.join(self.directory_common_pictures, self.settings.images.mouse),
+                mouse_height=config.mouse_height, settings_folder=self.directory_settings,
+                font_police=config.font_police, font_size=config.font_size, color_font=config.color_font,
+                color_background=config.color_background, opacity=config.opacity, border_size=config.border_size,
+                edit_width=config.edit_width, edit_height=config.edit_height, button_margin=config.button_margin,
+                vertical_spacing=config.vertical_spacing, section_vertical_spacing=config.section_vertical_spacing,
+                horizontal_spacing=config.horizontal_spacing, mouse_spacing=config.mouse_spacing,
+                manual_text=config.manual_text)
+
+    def panel_add_build_order(self):
+        """Open/close the panel to add a build order"""
+        if (self.panel_add_build_order is not None) and self.panel_add_build_order.isVisible():  # close panel
+            self.panel_add_build_order.close()
+            self.panel_add_build_order = None
+        else:  # open new panel
+            config = self.settings.panel_build_order
+            self.panel_add_build_order = BuildOrderWindow(
+                parent=self, game_icon=self.game_icon, build_order_folder=self.directory_build_orders,
+                font_police=config.font_police, font_size=config.font_size, color_font=config.color_font,
+                color_background=config.color_background, opacity=config.opacity, border_size=config.border_size,
+                edit_width=config.edit_width, edit_height=config.edit_height, edit_init_text=config.edit_init_text,
+                button_margin=config.button_margin, vertical_spacing=config.vertical_spacing,
+                horizontal_spacing=config.horizontal_spacing, build_order_website=config.build_order_website)
+
+    def get_hotkey_mouse_flag(self, name: str) -> bool:
+        """Get the flag value for a global hotkey and/or mouse input
+
+        Parameters
+        ----------
+        name    field to check
+
+        Returns
+        -------
+        True if flag activated, False if not activated or not found
+        """
+        valid_keyboard = (name in self.keyboard_mouse.keyboard_hotkeys) and (
+                self.keyboard_mouse.keyboard_hotkeys[name].sequence != '')
+        mouse_button_name = self.mouse_buttons_dict[name] if (name in self.mouse_buttons_dict) else None
+        valid_mouse = (mouse_button_name is not None) and (mouse_button_name in self.keyboard_mouse.mouse_button_names)
+
+        if valid_keyboard and valid_mouse:  # both mouse and hotkey must be pressed
+            if self.keyboard_mouse.is_keyboard_hotkey_pressed(name) and self.keyboard_mouse.get_mouse_flag(
+                    mouse_button_name):
+                return self.keyboard_mouse.get_mouse_elapsed_time(
+                    mouse_button_name) < self.unscaled_settings.hotkeys.mouse_max_time
+            else:
+                return False
+
+        elif valid_keyboard:  # check keyboard
+            return self.keyboard_mouse.get_keyboard_hotkey_flag(name)
+
+        elif valid_mouse:  # check mouse
+            return self.keyboard_mouse.get_mouse_flag(mouse_button_name)
+
+        return False  # not set
+
     def timer_mouse_keyboard_call(self):
         """Function called on a timer (related to mouse and keyboard inputs)"""
         self.update_mouse()  # update the mouse position
 
         # next panel button
         self.next_panel_button.hovering_show(self.is_mouse_in_roi_widget)
-
 
         # build order hovering
         if len(self.valid_build_orders) > 1:  # more than one build order for hovering color
@@ -607,22 +1020,20 @@ class RTSGameOverlay(QMainWindow):
                         color=self.settings.layout.configuration.hovering_build_order_color if (
                                 row_id == hovering_id) else None)
 
-        # pyinput flags
-        if self.pynput_next_panel:  # switch to next panel
-            self.next_panel()
-            self.pynput_next_panel = False
+        # keyboard action flags
+        if (self.panel_config_hotkeys is None) or (not self.panel_config_hotkeys.isVisible()):
+            # switch to next panel
+            if self.get_hotkey_mouse_flag('next_panel'):
+                self.next_panel()
 
-        if self.pynput_show_hide_overlay:  # show/hide overlay
-            self.show_hide()
-            self.pynput_show_hide_overlay = False
+            if self.get_hotkey_mouse_flag('show_hide'):  # show/hide overlay
+                self.show_hide()
 
-        if self.pynput_previous_build_order_step:  # select previous step of the build order
-            self.build_order_previous_step()
-            self.pynput_previous_build_order_step = False
+            if self.get_hotkey_mouse_flag('build_order_previous_step'):  # select previous step of the build order
+                self.build_order_previous_step()
 
-        if self.pynput_next_build_order_step:  # select next step of the build order
-            self.build_order_next_step()
-            self.pynput_next_build_order_step = False
+            if self.get_hotkey_mouse_flag('build_order_next_step'):  # select next step of the build order
+                self.build_order_next_step()
 
     def show_hide(self):
         """Show or hide the windows"""
@@ -634,19 +1045,125 @@ class RTSGameOverlay(QMainWindow):
         else:
             self.setWindowOpacity(self.settings.layout.opacity)
 
+    def update_hotkeys(self):
+        """Update the hotkeys and the settings file"""
+        config_hotkeys = self.panel_config_hotkeys.hotkeys
+        config_mouse_checkboxes = self.panel_config_hotkeys.mouse_checkboxes
+        config_field_to_mouse = self.panel_config_hotkeys.field_to_mouse
+
+        def split_keyboard_mouse(str_input: str):
+            """Split an input between keyboard and mouse parts
+
+            Parameters
+            ----------
+            str_input    input string from 'OverlaySequenceEdit'
+
+            Returns
+            -------
+            keyboard input, '' if no keyboard input
+            mouse input, '' if no valid mouse input
+            """
+            if '+' not in str_input:  # single input
+                if str_input in config_field_to_mouse:  # only mouse
+                    return '', config_field_to_mouse[str_input]
+                else:  # only keyboard
+                    return str_input, ''
+
+            else:  # several inputs
+                in_split = str_input.split('+')
+                keyboard_out = ''
+                mouse_out = ''
+                for elem in in_split:
+                    if elem != '':
+                        if elem in config_field_to_mouse:  # mouse part
+                            mouse_out = config_field_to_mouse[elem]  # only one mouse input possible (take the last)
+                        else:  # keyboard part
+                            if keyboard_out == '':
+                                keyboard_out = elem
+                            else:
+                                keyboard_out += '+' + elem
+                return keyboard_out, mouse_out
+
+        # update the hotkeys
+        print('Hotkeys update:')
+        for hotkey_name in self.hotkey_names:
+            if hasattr(self.unscaled_settings.hotkeys, hotkey_name):
+                hotkey_settings = getattr(self.unscaled_settings.hotkeys, hotkey_name)
+                hotkey_str = config_hotkeys[hotkey_name].get_str()
+
+                if config_mouse_checkboxes[hotkey_name].isChecked():  # consider mouse as input
+                    keyboard_in, mouse_in = split_keyboard_mouse(hotkey_str)
+                    hotkey_settings.keyboard = keyboard_in
+                    hotkey_settings.mouse = mouse_in
+                else:  # do not consider mouse as input
+                    hotkey_settings.keyboard = hotkey_str
+                    hotkey_settings.mouse = ''
+
+        self.set_keyboard_mouse()
+        self.save_settings()
+
+    def add_build_order(self):
+        """Try to add the build order written in the new build order panel"""
+        msg_text = None
+        try:
+            # get data as dictionary
+            build_order_data = json.loads(self.panel_add_build_order.text_input.toPlainText())
+
+            # check if build order content is valid
+            if self.check_valid_build_order(build_order_data):
+                name = build_order_data['name']  # name of the build order
+
+                # check if build order is a new one
+                if is_build_order_new(self.build_orders, build_order_data, self.build_order_category_name):
+
+                    # output filename
+                    output_name = f'{name}.json'
+                    if (self.build_order_category_name is not None) and (
+                            self.build_order_category_name in build_order_data):
+                        output_name = os.path.join(build_order_data[self.build_order_category_name], output_name)
+                    output_name = output_name.replace(' ', '_')  # replace spaces in the name
+                    out_filename = os.path.join(self.directory_build_orders, output_name)
+
+                    # check file does not exist
+                    if not os.path.isfile(out_filename):
+                        # create output directory if not existent
+                        os.makedirs(os.path.dirname(out_filename), exist_ok=True)
+                        # write JSON file
+                        with open(out_filename, 'w') as f:
+                            f.write(json.dumps(build_order_data, sort_keys=False, indent=4))
+                        # add build order to list
+                        self.build_orders.append(build_order_data)
+                        # clear input
+                        self.panel_add_build_order.text_input.clear()
+                        msg_text = f'Build order \'{name}\' added and saved as \'{out_filename}\'.'
+                    else:
+                        msg_text = f'Output file \'{out_filename}\' already exists (build order not added).'
+                else:
+                    msg_text = f'Build order already exists with the name \'{name}\' (not added).'
+            else:
+                msg_text = 'Build order content is not valid.'
+
+        except json.JSONDecodeError:
+            if msg_text is None:
+                msg_text = 'Error while trying to decode the build order JSON format (non valid JSON format).'
+
+        except:
+            if msg_text is None:
+                msg_text = 'Unknown error while trying to add the build order.'
+
+        # open popup message
+        popup_message('RTS Overlay - Adding new build order', msg_text)
+
     def save_settings(self):
         """Save the settings"""
         msg_text = f'Settings saved in {self.settings_file}.'  # message to display
+        os.makedirs(os.path.dirname(self.settings_file), exist_ok=True)
         with open(self.settings_file, 'w') as f:
             f.write(json.dumps(self.unscaled_settings.to_dict(), sort_keys=False, indent=4))
             print(msg_text)
 
         # open popup message
-        msg = QMessageBox()
-        msg.setWindowTitle('RTS Overlay - Settings saved')
-        msg.setText(msg_text)
-        msg.setIcon(QMessageBox.Information)
-        msg.exec_()
+        popup_message('RTS Overlay - Settings saved', msg_text)
 
     def update_mouse(self):
         """Update the mouse position"""
@@ -654,7 +1171,7 @@ class RTSGameOverlay(QMainWindow):
         self.mouse_x = pos.x()
         self.mouse_y = pos.y()
 
-    def is_mouse_in_roi(self, x: int, y: int, width: int, height: int):
+    def is_mouse_in_roi(self, x: int, y: int, width: int, height: int) -> bool:
         """Check if the last updated mouse position (using 'update_mouse') is in a ROI
 
         Parameters
@@ -671,20 +1188,24 @@ class RTSGameOverlay(QMainWindow):
         return (x <= self.mouse_x <= x + width) and (y <= self.mouse_y <= y + height)
 
     def is_mouse_in_window(self) -> bool:
-        """
-        Checks if the mouse is in the current window
+        """Checks if the mouse is in the current window
+
         Returns
         -------
-        boolean: True if mouse is in the window
+        True if mouse is in the window
         """
         return self.is_mouse_in_roi(self.x(), self.y(), self.width(), self.height())
 
-    def is_mouse_in_roi_widget(self, widget: QWidget):
+    def is_mouse_in_roi_widget(self, widget: QWidget) -> bool:
         """Check if the last updated mouse position (using 'update_mouse') is in the ROI of a widget
 
         Parameters
         ----------
         widget    widget to check
+
+        Returns
+        -------
+        True if mouse is in the ROI
         """
         return self.is_mouse_in_roi(
             x=self.x() + widget.x(), y=self.y() + widget.y(), width=widget.width(), height=widget.height())
@@ -710,8 +1231,8 @@ class RTSGameOverlay(QMainWindow):
             delta = QPoint(event.globalPos() - self.old_pos)  # motion of the mouse
             self.move(self.init_x + delta.x(), self.init_y + delta.y())  # moving the window accordingly
             # update the window position in the settings (for potential save)
-            self.settings.layout.upper_right_position = [self.x() + self.width(), self.y()]
-            self.unscaled_settings.layout.upper_right_position = [self.x() + self.width(), self.y()]
+            self.settings.layout.upper_right_position = [widget_x_end(self), self.y()]
+            self.unscaled_settings.layout.upper_right_position = [widget_x_end(self), self.y()]
 
     def build_order_click_select(self, event):
         """Check if a build order is being clicked
@@ -732,37 +1253,41 @@ class RTSGameOverlay(QMainWindow):
 
     def save_upper_right_position(self):
         """Save of the upper right corner position"""
-        self.upper_right_position = [self.x() + self.width(), self.y()]
+        self.upper_right_position = [widget_x_end(self), self.y()]
 
     def update_position(self):
         """Update the position to stick to the saved upper right corner"""
         self.move(self.upper_right_position[0] - self.width(), self.upper_right_position[1])
 
-    def build_order_previous_step(self):
+    def build_order_previous_step(self) -> bool:
         """Select the previous step of the build order
 
         Returns
         -------
         True if build order step changed
         """
+        self.build_order_tooltip.clear()  # clear tooltip
+
         old_selected_build_order_step_id = self.selected_build_order_step_id
         self.selected_build_order_step_id = max(0, min(self.selected_build_order_step_id - 1,
                                                        self.selected_build_order_step_count - 1))
         return old_selected_build_order_step_id != self.selected_build_order_step_id
 
-    def build_order_next_step(self):
+    def build_order_next_step(self) -> bool:
         """Select the next step of the build order
 
         Returns
         -------
         True if build order step changed
         """
+        self.build_order_tooltip.clear()  # clear tooltip
+
         old_selected_build_order_step_id = self.selected_build_order_step_id
         self.selected_build_order_step_id = max(0, min(self.selected_build_order_step_id + 1,
                                                        self.selected_build_order_step_count - 1))
         return old_selected_build_order_step_id != self.selected_build_order_step_id
 
-    def select_build_order_id(self, build_order_id: int = -1):
+    def select_build_order_id(self, build_order_id: int = -1) -> bool:
         """Select build order ID
 
         Parameters
@@ -795,16 +1320,47 @@ class RTSGameOverlay(QMainWindow):
         """
         self.valid_build_orders = []  # reset the list
         build_order_search_string = self.build_order_search.text()
+
         if build_order_search_string == '':  # no text added
             return
 
-        # Do a fuzzy search for matching build orders
-        self.valid_build_orders = [match[0] for match in process.extractBests(
-            build_order_search_string,
-            [build_order["name"] for build_order in self.build_orders],
-            score_cutoff=50,
-            limit=self.settings.layout.configuration.bo_list_max_count
-        )]
+        # only keep build orders with valid key conditions
+        if key_condition is not None:
+            valid_key_build_orders = [build_order for build_order in self.build_orders if
+                                      check_build_order_key_values(build_order, key_condition)]
+        else:
+            valid_key_build_orders = self.build_orders
+
+        configuration = self.settings.layout.configuration
+        if build_order_search_string == ' ':  # special case: select any build order, up to the limit count
+            for count, build_order in enumerate(valid_key_build_orders):
+                if count >= configuration.bo_list_max_count:
+                    break
+                self.valid_build_orders.append(build_order['name'])
+
+        elif configuration.bo_list_fuzz_search:  # do a fuzzy search for matching build orders
+            self.valid_build_orders = [match[0] for match in process.extractBests(
+                build_order_search_string,
+                [build_order['name'] for build_order in valid_key_build_orders],
+                score_cutoff=configuration.bo_list_fuzz_score_cutoff,
+                limit=configuration.bo_list_max_count
+            )]
+
+        else:  # search by splitting the words
+            search_split = build_order_search_string.split(' ')  # split according to spaces
+
+            for build_order in self.build_orders:
+                if len(self.valid_build_orders) >= configuration.bo_list_max_count:
+                    break
+
+                valid_name = True  # assumes valid name
+                build_order_name = build_order['name']
+                for search_part in search_split:  # loop on the sub-parts to find
+                    if search_part.lower() not in build_order_name.lower():
+                        valid_name = False
+                        break
+                if valid_name:  # add valid build order
+                    self.valid_build_orders.append(build_order_name)
 
         # check all elements are unique
         assert len(set(self.valid_build_orders)) == len(self.valid_build_orders)
@@ -910,6 +1466,8 @@ class RTSGameOverlay(QMainWindow):
         self.config_quit_button.hide()
         self.config_save_button.hide()
         self.config_reload_button.hide()
+        self.config_hotkey_button.hide()
+        self.config_build_order_button.hide()
 
         self.build_order_step.hide()
         self.build_order_previous_button.hide()
@@ -936,19 +1494,3 @@ class RTSGameOverlay(QMainWindow):
 
         # display match data
         self.match_data_display.hide()
-
-    def set_pynput_next_panel(self):
-        """pynput function to switch to next panel"""
-        self.pynput_next_panel = True
-
-    def set_pynput_show_hide_overlay(self):
-        """pynput function to show/hide overlay"""
-        self.pynput_show_hide_overlay = True
-
-    def set_pynput_previous_build_order_step(self):
-        """pynput function to select previous step of the build order"""
-        self.pynput_previous_build_order_step = True
-
-    def set_pynput_next_build_order_step(self):
-        """pynput function to select next step of the build order"""
-        self.pynput_next_build_order_step = True
