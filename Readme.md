@@ -9,7 +9,7 @@ At the moment, the following games are supported:
 * [Age of Empires II Definitive Edition](https://www.ageofempires.com/games/aoeiide/)
     * Choose and display build order.
     * Show match data with the player main statistics.
-    * [DOWNLOAD HERE](https://github.com/CraftySalamander/RTS_Overlay/releases/download/1.4.2/aoe2_overlay.zip) (Windows only) or run the program with python scripts (see **Python configuration** section).
+    * [DOWNLOAD HERE](https://github.com/CraftySalamander/RTS_Overlay/releases/download/1.4.3/aoe2_overlay.zip) (Windows only) or run the program with python scripts (see **Python configuration** section).
     * See YouTube demo [here](https://youtu.be/4wNWgKCCLjE), also [1.3.0 Youtube update](https://www.youtube.com/watch?v=XN8hS7OJFaM).
 
 * [Age of Empires IV](https://www.ageofempires.com/games/age-of-empires-iv/)
@@ -166,7 +166,7 @@ This is the content of the columns (from left to right):
 * Count of losses for the current game type.
 * National flag of the player.
 
-Note that you can activate/deactivate this panel with the *"fetch_match_data"* field in the settings file (you must restart the overlay to take it into account). The accepted values are *'aoe2.net'*, *'aoe2insights.com'* or *''* (to deactivate it). At the moment, *https://aoe2.net* is currently down, while *https://www.aoe2insights.com* is available but only displays finished match data.
+Note that you can activate/deactivate this panel with the *"fetch_match_data"* field in the settings file (you must restart the overlay to take it into account). The accepted values are *'aoe2.net'* or *''* (to deactivate it).
 
 
 Age of Empires IV Definitive Edition (AoE4)
@@ -211,7 +211,6 @@ conda install python-Levenshtein
 
 // match data
 pip install requests // url requests
-pip install beautifulsoup4 // parsing HTML files
 
 // only needed to prepare the standalone library
 pip install Nuitka
