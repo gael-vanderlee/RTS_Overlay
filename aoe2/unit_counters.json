@@ -1,0 +1,2210 @@
+{
+    "Villager": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Villager_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Most buildings",
+            "Skirmishers (in small numbers)",
+            "rams",
+            "Trebuchets"
+        ],
+        "weak_vs": [
+            "Almost everything"
+        ],
+        "image_name": "MaleVillDE.jpg"
+    },
+    "Trade Cart": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Trade_Cart"
+    },
+    "Trade Cog": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Trade_Cog",
+        "strong_vs": [
+            "Nothing"
+        ],
+        "weak_vs": [
+            "Everything"
+        ],
+        "image_name": "Trade cog aoe2DE.png"
+    },
+    "Fishing Ship": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Fishing_Ship_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Nothing"
+        ],
+        "weak_vs": [
+            "Everything"
+        ],
+        "image_name": "FishingShipDE.png"
+    },
+    "Transport Ship": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Transport_Ship_(Age_of_Empires_II)"
+    },
+    "Monk": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Monk_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Slow non-ranged units"
+        ],
+        "weak_vs": [
+            "Eagle Warriors",
+            "Light Cavalry",
+            "Konniks (after Heresy)",
+            "siege weapons (before Redemption)",
+            "Heroes"
+        ],
+        "image_name": "Monk aoe2DE.png"
+    },
+    "Militia": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Militia_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Skirmishers",
+            "Scout Cavalry",
+            "Spearmen"
+        ],
+        "weak_vs": [
+            "Archers",
+            "walls"
+        ],
+        "image_name": "MilitiaDE.png"
+    },
+    "Man-at-Arms": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Man-at-Arms_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Skirmishers",
+            "Scout Cavalry",
+            "Eagle Scouts",
+            "Spearmen",
+            "Villagers",
+            "Camel Scouts"
+        ],
+        "weak_vs": [
+            "Archers",
+            "Scorpions"
+        ],
+        "image_name": "Manatarms aoe2DE.png"
+    },
+    "Long Swordsman": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Long_Swordsman_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Skirmishers",
+            "Camel Riders",
+            "Eagle Warriors",
+            "buildings",
+            "Light Cavalry",
+            "Pikemen"
+        ],
+        "weak_vs": [
+            "Archers",
+            "Scorpions",
+            "Cataphracts",
+            "Jaguar Warriors",
+            "Boyars",
+            "Teutonic Knights"
+        ],
+        "image_name": "Longswordsman aoe2DE.png"
+    },
+    "Two-Handed Swordsman": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Two-Handed_Swordsman",
+        "strong_vs": [
+            "Skirmishers",
+            "Halberdiers",
+            "Camel Riders",
+            "Eagle Warriors",
+            "buildings",
+            "Light Cavalry"
+        ],
+        "weak_vs": [
+            "Archers",
+            "Scorpions",
+            "Cataphracts",
+            "Jaguar Warriors",
+            "Boyars",
+            "Teutonic Knights"
+        ],
+        "image_name": "Twohanded aoe2DE.png"
+    },
+    "Champion": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Champion",
+        "strong_vs": [
+            "Skirmishers",
+            "Genitours",
+            "Halberdiers",
+            "Camel Riders",
+            "Eagle Warriors",
+            "buildings",
+            "Light Cavalry",
+            "Huskarls"
+        ],
+        "weak_vs": [
+            "Archer units",
+            "Scorpions",
+            "Mangonels",
+            "Cataphracts",
+            "Jaguar Warriors",
+            "Paladins",
+            "Boyars",
+            "War Elephants",
+            "Battle Elephants",
+            "Teutonic Knights",
+            "Obuchs"
+        ],
+        "image_name": "Champion aoe2DE.png"
+    },
+    "Spearman": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Spearman_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Cavalry"
+        ],
+        "weak_vs": [
+            "Archers",
+            "infantry"
+        ],
+        "image_name": "Spearman aoe2DE.png"
+    },
+    "Pikeman": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Pikeman_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Cavalry"
+        ],
+        "weak_vs": [
+            "Archers",
+            "Scorpions",
+            "Cataphracts",
+            "infantry"
+        ],
+        "image_name": "Aoe2-infantry-2-pikeman.png"
+    },
+    "Halberdier": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Halberdier_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Cavalry"
+        ],
+        "weak_vs": [
+            "Archers",
+            "Heavy Scorpions",
+            "infantry",
+            "Elite Cataphracts"
+        ],
+        "image_name": "Halberdier aoe2DE.png"
+    },
+    "Eagle Scout": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Eagle_Scout_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Scout Cavalry",
+            "Foot archers"
+        ],
+        "weak_vs": [
+            "Heavy Infantry",
+            "Heavy Cavalry"
+        ],
+        "image_name": "Eaglescout aoe2DE.png"
+    },
+    "Eagle Warrior": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Eagle_Warrior",
+        "strong_vs": [
+            "Foot archers",
+            "siege weapons",
+            "Monks",
+            "Genitours"
+        ],
+        "weak_vs": [
+            "Gunpowder units",
+            "Slingers",
+            "Heavy infantry",
+            "Heavy cavalry"
+        ],
+        "image_name": "Eaglewarrior aoe2DE.png"
+    },
+    "Elite Eagle Warrior": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Elite_Eagle_Warrior",
+        "strong_vs": [
+            "Foot archers",
+            "siege weapons",
+            "Monks",
+            "Halberdiers",
+            "Heavy Camel Riders"
+        ],
+        "weak_vs": [
+            "Heavy cavalry",
+            "heavy infantry",
+            "Gunpowder units",
+            "Slingers"
+        ],
+        "image_name": "EliteEaglewarrior aoe2DE.png"
+    },
+    "Archer": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Archer_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Infantry",
+            "Villagers"
+        ],
+        "weak_vs": [
+            "Skirmishers",
+            "Scout Cavalry",
+            "Eagle Scouts"
+        ],
+        "image_name": "Archer aoe2DE.png"
+    },
+    "Crossbowman": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Crossbowman_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Infantry",
+            "Villagers",
+            "Camel units"
+        ],
+        "weak_vs": [
+            "Skirmishers",
+            "siege units",
+            "cavalry",
+            "Huskarls",
+            "Eagle Warriors",
+            "Rattan Archers"
+        ],
+        "image_name": "Crossbowman aoe2DE.png"
+    },
+    "Arbalester": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Arbalester",
+        "strong_vs": [
+            "Infantry",
+            "Villagers",
+            "Camel units"
+        ],
+        "weak_vs": [
+            "Skirmishers",
+            "siege units",
+            "cavalry",
+            "Huskarls",
+            "Eagle Warriors",
+            "Rattan Archers",
+            "Woad Raiders"
+        ],
+        "image_name": "Arbalester aoe2DE.png"
+    },
+    "Skirmisher": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Skirmisher_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Archers",
+            "Spearmen"
+        ],
+        "weak_vs": [
+            "Melee units",
+            "siege units"
+        ],
+        "image_name": "Skirmisher aoe2DE.png"
+    },
+    "Elite Skirmisher": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Elite_Skirmisher",
+        "strong_vs": [
+            "Archers",
+            "Pikemen"
+        ],
+        "weak_vs": [
+            "Melee units",
+            "siege units"
+        ],
+        "image_name": "Elite skirmisher aoe2DE.png"
+    },
+    "Hand Cannoneer": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Hand_Cannoneer",
+        "strong_vs": [
+            "Infantry"
+        ],
+        "weak_vs": [
+            "Skirmishers",
+            "Genitours",
+            "Scorpions",
+            "Onagers",
+            "cavalry",
+            "Condottieri"
+        ],
+        "image_name": "Hand cannoneer aoe2DE.png"
+    },
+    "Cavalry Archer": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Cavalry_Archer_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Most infantry",
+            "most foot archers with all armor upgrades"
+        ],
+        "weak_vs": [
+            "Genoese Crossbowmen",
+            "Huskarls",
+            "Skirmishers",
+            "Genitours",
+            "Eagle Warriors",
+            "Mangonels",
+            "Scorpions",
+            "camel units",
+            "Rattan Archers",
+            "Camel Archers",
+            "Elephant Archers",
+            "War Wagons",
+            "Hussite Wagons",
+            "Shrivamsha Riders",
+            "Ghulams"
+        ],
+        "image_name": "Cavalryarcher aoe2DE.png"
+    },
+    "Heavy Cavalry Archer": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Heavy_Cavalry_Archer",
+        "strong_vs": [
+            "Slow and non-ranged units",
+            "foot archers"
+        ],
+        "weak_vs": [
+            "Genoese Crossbowmen",
+            "Huskarls",
+            "Mamelukes",
+            "Camel Riders",
+            "Skirmishers",
+            "Eagle Warriors",
+            "Onagers",
+            "Scorpions",
+            "Camel Archers",
+            "Rattan Archers"
+        ],
+        "image_name": "Heavycavalryarcher aoe2de.png"
+    },
+    "Elephant Archer": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Elephant_Archer_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Slow non-ranged units",
+            "archers"
+        ],
+        "weak_vs": [
+            "Spearmen",
+            "Kamayuks",
+            "Berserks",
+            "Genoese Crossbowmen",
+            "Huskarls",
+            "Mamelukes",
+            "Camel Riders",
+            "Eagle Scouts",
+            "Monks",
+            "Skirmishers",
+            "Scorpions",
+            "Flaming Camels"
+        ],
+        "image_name": "Aoe2de DOI elephant archer icon.png"
+    },
+    "Elite Elephant Archer": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Elite_Elephant_Archer",
+        "strong_vs": [
+            "Slow non-ranged units",
+            "archers"
+        ],
+        "weak_vs": [
+            "Spearmen",
+            "Kamayuks",
+            "Berserks",
+            "Genoese Crossbowmen",
+            "Huskarls",
+            "Mamelukes",
+            "Heavy Camel Riders",
+            "Elite Eagle Warriors",
+            "Monks",
+            "Skirmishers",
+            "Flaming Camels"
+        ],
+        "image_name": "ElephantArcherIcon-DE.png"
+    },
+    "Scout Cavalry": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Scout_Cavalry_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Skirmishers",
+            "Villagers",
+            "siege weapons",
+            "Archers in low numbers",
+            "Monks"
+        ],
+        "weak_vs": [
+            "Infantry",
+            "cavalry"
+        ],
+        "image_name": "Scoutcavalry aoe2DE.png"
+    },
+    "Light Cavalry": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Light_Cavalry_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Skirmishers",
+            "Villagers",
+            "siege weapons",
+            "archers",
+            "Monks"
+        ],
+        "weak_vs": [
+            "Most melee units",
+            "Genoese Crossbowmen"
+        ],
+        "image_name": "Lightcavalry aoe2DE.png"
+    },
+    "Hussar": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Hussar_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Archers",
+            "siege weapons",
+            "and Monks"
+        ],
+        "weak_vs": [
+            "Infantry",
+            "Cavalry",
+            "Genoese Crossbowmen"
+        ],
+        "image_name": "Hussar aoe2DE.png"
+    },
+    "Winged Hussar": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Winged_Hussar_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Archers",
+            "siege weapons",
+            "Monks",
+            "and gunpowder units"
+        ],
+        "weak_vs": [
+            "Most melee units",
+            "Genoese Crossbowmen",
+            "and Spearman-line"
+        ],
+        "image_name": "Aoe2-icon-winged-hussar.png"
+    },
+    "Knight": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Knight_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Infantry",
+            "archers",
+            "Villagers",
+            "siege weapons",
+            "Light cavalry"
+        ],
+        "weak_vs": [
+            "Boyars",
+            "Pikemen",
+            "Kamayuks",
+            "Berserks",
+            "Genoese Crossbowmen",
+            "Teutonic Knights",
+            "Mamelukes",
+            "Camel Riders",
+            "Monks",
+            "War Elephants",
+            "Battle Elephants"
+        ],
+        "image_name": "Knight aoe2DE.png"
+    },
+    "Cavalier": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Cavalier",
+        "strong_vs": [
+            "Infantry",
+            "archers",
+            "Villagers",
+            "siege weapons",
+            "Light cavalry"
+        ],
+        "weak_vs": [
+            "Boyars",
+            "Halberdiers",
+            "Kamayuks",
+            "Berserks",
+            "Genoese Crossbowmen",
+            "Teutonic Knights",
+            "Mamelukes",
+            "Heavy Camel Riders",
+            "Monks",
+            "War Elephants",
+            "Elite Battle Elephants"
+        ],
+        "image_name": "Cavalier aoe2DE.png"
+    },
+    "Paladin": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Paladin",
+        "strong_vs": [
+            "Infantry",
+            "foot archers",
+            "siege weapons",
+            "light cavalry"
+        ],
+        "weak_vs": [
+            "Boyars",
+            "Halberdiers",
+            "Kamayuks",
+            "Berserks",
+            "Genoese Crossbowmen",
+            "Teutonic Knights",
+            "Mamelukes",
+            "Heavy Camel Riders",
+            "Monks",
+            "War Elephants",
+            "Elite Battle Elephants"
+        ],
+        "image_name": "Paladin aoe2DE.png"
+    },
+    "Camel Rider": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Camel_Rider_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Skirmishers",
+            "siege weapons",
+            "mounted archers",
+            "cavalry"
+        ],
+        "weak_vs": [
+            "Infantry",
+            "foot archers",
+            "Cataphracts",
+            "defensive structures"
+        ],
+        "image_name": "Camelrider aoe2DE.png"
+    },
+    "Heavy Camel Rider": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Heavy_Camel_Rider",
+        "strong_vs": [
+            "Skirmishers",
+            "siege weapons",
+            "mounted archers",
+            "cavalry"
+        ],
+        "weak_vs": [
+            "Infantry",
+            "foot archers",
+            "Cataphracts",
+            "defensive structures"
+        ],
+        "image_name": "Aoe2 heavycamelriderDE.png"
+    },
+    "Battle Elephant": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Battle_Elephant",
+        "strong_vs": [
+            "Most melee units",
+            "buildings",
+            "Resistant to most foot archers"
+        ],
+        "weak_vs": [
+            "Pikemen",
+            "Kamayuks",
+            "Genoese Crossbowmen",
+            "Mamelukes",
+            "Cavalry Archers",
+            "Monks",
+            "War Elephants",
+            "Scorpions",
+            "Flaming Camels"
+        ],
+        "image_name": "Battle elephant aoe2DE.png"
+    },
+    "Elite Battle Elephant": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Elite_Battle_Elephant",
+        "strong_vs": [
+            "Most melee units",
+            "buildings",
+            "Resistant to most foot archers"
+        ],
+        "weak_vs": [
+            "Halberdiers",
+            "Kamayuks",
+            "Genoese Crossbowmen",
+            "Mamelukes",
+            "mounted archers",
+            "Monks",
+            "War Elephants",
+            "Flaming Camels"
+        ],
+        "image_name": "Elite battle elephant aoe2DE.png"
+    },
+    "Steppe Lancer": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Steppe_Lancer",
+        "strong_vs": [
+            "Light Cavalry",
+            "Villagers",
+            "siege weapons",
+            "archers",
+            "masses of cluttered units (if massed)"
+        ],
+        "weak_vs": [
+            "Stronger cavalry",
+            "Pikemen",
+            "camel units"
+        ],
+        "image_name": "Steppelancericon.png"
+    },
+    "Elite Steppe Lancer": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Elite_Steppe_Lancer",
+        "strong_vs": [
+            "Light Cavalry",
+            "Skirmishers",
+            "Villagers",
+            "siege weapons",
+            "archers",
+            "masses of cluttered units (if massed)"
+        ],
+        "weak_vs": [
+            "Stronger cavalry",
+            "Halberdiers",
+            "Monks",
+            "camel units"
+        ],
+        "image_name": "Elitesteppelancericon.png"
+    },
+    "Xolotl Warrior": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Xolotl_Warrior",
+        "strong_vs": [
+            "Infantry",
+            "Villagers",
+            "siege weapons",
+            "Light Cavalry"
+        ],
+        "weak_vs": [
+            "Boyars",
+            "Pikemen",
+            "Kamayuks",
+            "Berserks",
+            "Genoese Crossbowmen",
+            "Teutonic Knights",
+            "Mamelukes",
+            "Camel Riders",
+            "Monks",
+            "War Elephants"
+        ],
+        "image_name": "Xolotlicon.png"
+    },
+    "Armored Elephant": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Armored_Elephant_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Buildings",
+            "Archers",
+            "Trebuchets"
+        ],
+        "weak_vs": [
+            "Infantry",
+            "Flaming Camels",
+            "cavalry",
+            "Mangudai",
+            "Mangonels",
+            "Monks"
+        ],
+        "image_name": "AoE2DE Armored Elephant icon.png"
+    },
+    "Siege Elephant": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Siege_Elephant_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Buildings",
+            "Archers"
+        ],
+        "weak_vs": [
+            "Infantry",
+            "Flaming Camels",
+            "Cavalry",
+            "Mangudai",
+            "Onagers"
+        ],
+        "image_name": "AoE2DE Siege Elephant icon.png"
+    },
+    "Battering Ram": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Battering_Ram_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Buildings",
+            "Archers",
+            "Gunpowder units",
+            "Trebuchets"
+        ],
+        "weak_vs": [
+            "Mangudai",
+            "Mangonels",
+            "melee units especially Magyar Huszars"
+        ],
+        "image_name": "Battering ram aoe2DE.png"
+    },
+    "Capped Ram": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Capped_Ram",
+        "strong_vs": [
+            "Buildings",
+            "Trebuchets",
+            "Archers"
+        ],
+        "weak_vs": [
+            "Mangudai",
+            "Onagers",
+            "melee units especially Magyar Huszars"
+        ],
+        "image_name": "Capped ram aoe2DE.png"
+    },
+    "Siege Ram": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Siege_Ram",
+        "strong_vs": [
+            "Buildings",
+            "Trebuchets"
+        ],
+        "weak_vs": [
+            "Mangudai",
+            "Onagers",
+            "melee units especially Magyar Huszars"
+        ],
+        "image_name": "Siege ram aoe2DE.png"
+    },
+    "Mangonel": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Mangonel_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Buildings",
+            "archers",
+            "siege weapons",
+            "units in dense formations"
+        ],
+        "weak_vs": [
+            "Fast moving melee units especially Magyar Huszars and Eagle Warriors",
+            "Mangudai",
+            "Monks with Sancity and Redemption"
+        ],
+        "image_name": "Mangonel aoe2DE.png"
+    },
+    "Onager": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Onager_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Buildings",
+            "archers",
+            "siege weapons except Bombard Cannons",
+            "units in dense formations"
+        ],
+        "weak_vs": [
+            "Fast moving melee units especially Magyar Huszars and Eagle Warriors",
+            "Mangudai",
+            "Bombard Cannons",
+            "Monks with Block Printing and Redemption"
+        ],
+        "image_name": "Onager aoe2DE.png"
+    },
+    "Siege Onager": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Siege_Onager",
+        "strong_vs": [
+            "Buildings",
+            "archers",
+            "siege weapons except Bombard Cannons",
+            "units in dense formations"
+        ],
+        "weak_vs": [
+            "Fast moving melee units especially Magyar Huszars and Eagle Warriors",
+            "Mangudai",
+            "Bombard Cannons",
+            "Monks with Block Printing and Redemption"
+        ],
+        "image_name": "Siege onager aoe2DE.png"
+    },
+    "Scorpion": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Scorpion",
+        "strong_vs": [
+            "Massed Infantry and archers",
+            "Elephants",
+            "slow-moving units"
+        ],
+        "weak_vs": [
+            "Cavalry",
+            "fast-moving melee units",
+            "Magyar Huszars",
+            "Mangudai",
+            "Mangonels",
+            "Bombard Cannons",
+            "Eagle Warriors",
+            "Woad Raiders",
+            "Huskarls"
+        ],
+        "image_name": "Scorpion aoe2DE.png"
+    },
+    "Heavy Scorpion": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Heavy_Scorpion",
+        "strong_vs": [
+            "Massed Infantry and archers",
+            "Elephants",
+            "slow-moving units"
+        ],
+        "weak_vs": [
+            "Cavalry",
+            "fast-moving melee units",
+            "Magyar Huszars",
+            "Mangudai",
+            "Onagers",
+            "Bombard Cannons",
+            "Eagle Warriors",
+            "Woad Raiders",
+            "Huskarls"
+        ],
+        "image_name": "Heavyscorpion aoe2DE.png"
+    },
+    "Bombard Cannon": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Bombard_Cannon",
+        "strong_vs": [
+            "Buildings",
+            "units in dense formations and ships (especially with Arquebus)",
+            "siege weapons"
+        ],
+        "weak_vs": [
+            "Mangudai",
+            "melee units at close range especially Condottieri",
+            "Eagle Warriors",
+            "Magyar Huszars"
+        ],
+        "image_name": "Bombard cannon aoe2DE.png"
+    },
+    "Trebuchet": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Trebuchet",
+        "strong_vs": [
+            "Buildings",
+            "archer units"
+        ],
+        "weak_vs": [
+            "Melee units (especially Magyar Huszars and Eagle Warriors)",
+            "Mangudai",
+            "Rams",
+            "Bombard Cannons",
+            "Onagers"
+        ],
+        "image_name": "Trebuchet aoe2DE.png"
+    },
+    "Petard": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Petard_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Buildings",
+            "siege weapons",
+            "non-ranged units"
+        ],
+        "weak_vs": [
+            "Ranged units"
+        ],
+        "image_name": "Petard aoe2DE.png"
+    },
+    "Siege Tower": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Siege_Tower_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Archers",
+            "Walls"
+        ],
+        "weak_vs": [
+            "Melee units",
+            "especially Magyar Huszars and Eagle Warriors",
+            "Mangudai",
+            "Mangonels",
+            "Bombard Cannons"
+        ],
+        "image_name": "Siegetower aoe2DE.png"
+    },
+    "Galley": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Galley_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Transport Ships",
+            "Fishing Ships",
+            "buildings in the shoreline",
+            "melee units in the shoreline"
+        ],
+        "weak_vs": [
+            "Fire Galleys",
+            "towers",
+            "Castles",
+            "ranged units on the shoreline"
+        ],
+        "image_name": "Galley aoe2DE.png"
+    },
+    "War Galley": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/War_Galley_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Buildings in the shoreline",
+            "melee units in the shoreline",
+            "Demolition Ships"
+        ],
+        "weak_vs": [
+            "Fire Ships",
+            "Turtle Ships",
+            "Longboats",
+            "towers",
+            "Castles",
+            "ranged siege units on the shoreline"
+        ],
+        "image_name": "War galley aoe2DE.png"
+    },
+    "Galleon": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Galleon_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Transport Ships",
+            "Fishing Ships",
+            "buildings in the shoreline",
+            "melee units in the shoreline",
+            "Demolition Ships",
+            "Cannon Galleons"
+        ],
+        "weak_vs": [
+            "Fire Ships",
+            "Turtle Ships",
+            "Longboats",
+            "towers",
+            "Castles",
+            "ranged siege units on the shoreline"
+        ],
+        "image_name": "Galleon aoe2DE.png"
+    },
+    "Fire Galley": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Fire_Galley_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Transport Ships",
+            "buildings in the shoreline",
+            "melee units in the shallows",
+            "Galleys",
+            "Rams"
+        ],
+        "weak_vs": [
+            "Demolition Rafts",
+            "towers",
+            "ranged siege units on the shoreline"
+        ],
+        "image_name": "Fire galley aoe2DE.png"
+    },
+    "Fire Ship": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Fire_Ship_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Transport Ships",
+            "Fishing Ships",
+            "buildings in the shoreline",
+            "melee units in the shallows",
+            "War Galleys",
+            "Cannon Galleons",
+            "Rams"
+        ],
+        "weak_vs": [
+            "Demolition Ships",
+            "Turtle Ships",
+            "Longboats",
+            "towers",
+            "Castles",
+            "ranged siege units on the shoreline"
+        ],
+        "image_name": "Fireship aoe2DE.png"
+    },
+    "Fast Fire Ship": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Fast_Fire_Ship",
+        "strong_vs": [
+            "Transport Ships",
+            "Fishing Ships",
+            "buildings in the shoreline",
+            "melee units in the shallows",
+            "Galleons",
+            "Cannon Galleons"
+        ],
+        "weak_vs": [
+            "Demolition Ships",
+            "Turtle Ships",
+            "Longboats",
+            "towers",
+            "Castles",
+            "ranged siege units on the shoreline"
+        ],
+        "image_name": "Fastfireship aoe2DE.png"
+    },
+    "Demolition Raft": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Demolition_Raft",
+        "strong_vs": [
+            "Transport Ships",
+            "Fishing Ships",
+            "Fire Galleys",
+            "buildings in the shoreline",
+            "melee units in the shallows"
+        ],
+        "weak_vs": [
+            "Towers",
+            "ranged units on the shoreline"
+        ],
+        "image_name": "Demoraft aoe2DE.png"
+    },
+    "Demolition Ship": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Demolition_Ship_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Transport Ships",
+            "Fishing Ships",
+            "Fire Ships",
+            "buildings in the shoreline",
+            "melee units in the shallows",
+            "Cannon Galleons"
+        ],
+        "weak_vs": [
+            "Turtle Ships",
+            "towers",
+            "Castles",
+            "ranged units on the shoreline"
+        ],
+        "image_name": "Demoship aoe2DE.png"
+    },
+    "Heavy Demolition Ship": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Heavy_Demolition_Ship",
+        "strong_vs": [
+            "Transport Ships",
+            "Fishing Ships",
+            "buildings in the shoreline",
+            "melee units in the shallows",
+            "Cannon Galleons"
+        ],
+        "weak_vs": [
+            "Turtle Ships",
+            "towers",
+            "Castles",
+            "ranged units on the shoreline"
+        ],
+        "image_name": "Heavydemoship aoe2de.png"
+    },
+    "Cannon Galleon": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Cannon_Galleon",
+        "strong_vs": [
+            "Buildings"
+        ],
+        "weak_vs": [
+            "Ships",
+            "Bombard Cannons",
+            "Monks"
+        ],
+        "image_name": "Cannon galleon aoe2DE.png"
+    },
+    "Elite Cannon Galleon": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Elite_Cannon_Galleon",
+        "strong_vs": [
+            "Buildings"
+        ],
+        "weak_vs": [
+            "Ships",
+            "Bombard Cannons",
+            "Monks"
+        ],
+        "image_name": "Elite cannon galleon aoe2de.png"
+    },
+    "Longbowman": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Longbowman_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Infantry",
+            "archers",
+            "Villagers"
+        ],
+        "weak_vs": [
+            "Skirmishers",
+            "Samurai",
+            "siege weapons",
+            "Knights",
+            "Coustilliers",
+            "Huskarls",
+            "Eagle Warriors",
+            "Genitours",
+            "Rattan Archers",
+            "Ghulams"
+        ],
+        "image_name": "LongbowmanIcon-DE.png"
+    },
+    "Cataphract": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Cataphract_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Skirmishers",
+            "infantry",
+            "siege weapons",
+            "Light Cavalry",
+            "Camel Riders"
+        ],
+        "weak_vs": [
+            "War Elephants",
+            "Battle Elephants",
+            "Paladins",
+            "Boyars",
+            "massed archers",
+            "massed Halberdiers",
+            "Monks"
+        ],
+        "image_name": "CataphractIcon-DE.png"
+    },
+    "Woad Raider": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Woad_Raider",
+        "strong_vs": [
+            "Skirmishers",
+            "Halberdiers",
+            "Eagle Warriors",
+            "siege weapons",
+            "buildings",
+            "Light Cavalry",
+            "Huskarls"
+        ],
+        "weak_vs": [
+            "Archers",
+            "Jaguar Warriors",
+            "Paladins",
+            "Cataphracts",
+            "Boyars",
+            "War Elephants",
+            "Battle Elephants",
+            "Samurai",
+            "Berserks",
+            "Teutonic Knights",
+            "Obuchs"
+        ],
+        "image_name": "WoadRaiderIcon-DE.png"
+    },
+    "Chu Ko Nu": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Chu_Ko_Nu_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Infantry",
+            "buildings",
+            "Rams"
+        ],
+        "weak_vs": [
+            "Skirmishers",
+            "Scorpions",
+            "Mangonels",
+            "cavalry",
+            "Huskarls",
+            "Eagle Warriors",
+            "Genitours",
+            "Ghulams"
+        ],
+        "image_name": "ChukoNuIcon-DE.png"
+    },
+    "Throwing Axeman": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Throwing_Axeman_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Skirmishers",
+            "Halberdiers",
+            "Eagle Warriors",
+            "Rams",
+            "Trebuchets",
+            "buildings",
+            "Light Cavalry",
+            "Huskarls",
+            "Camel Riders"
+        ],
+        "weak_vs": [
+            "Archers",
+            "Scorpions",
+            "Mangonels",
+            "Jaguar Warriors",
+            "Boyars",
+            "Cataphracts",
+            "Samurai",
+            "Teutonic Knights",
+            "Paladins"
+        ],
+        "image_name": "ThrowingAxemanIcon-DE.png"
+    },
+    "Huskarl": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Huskarl_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Archers",
+            "buildings",
+            "Eagle Warriors",
+            "Light Cavalry",
+            "Camel Riders",
+            "Scorpions"
+        ],
+        "weak_vs": [
+            "Mangonels",
+            "Heavy infantry",
+            "Heavy cavalry",
+            "Mamelukes",
+            "Gbetos",
+            "Chakram Throwers"
+        ],
+        "image_name": "HuskarlIcon-DE.png"
+    },
+    "Samurai": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Samurai_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Buildings",
+            "Eagle Warriors",
+            "Pikemen",
+            "Skirmishers",
+            "Light cavalry",
+            "Non-ranged unique units (except Jaguar Warriors and Cataphracts)"
+        ],
+        "weak_vs": [
+            "Archers",
+            "Scorpions",
+            "Hand Cannoneers",
+            "Paladins",
+            "Battle Elephants."
+        ],
+        "image_name": "SamuraiIcon-DE.png"
+    },
+    "War Elephant": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/War_Elephant_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Buildings",
+            "melee units"
+        ],
+        "weak_vs": [
+            "Pikemen",
+            "Kamayuks",
+            "Genoese Crossbowmen",
+            "Mamelukes",
+            "Camel Riders",
+            "Cavalry Archers",
+            "Monks",
+            "Mangonels",
+            "Scorpions",
+            "Flaming Camels"
+        ],
+        "image_name": "WarElephantIcon-DE.png"
+    },
+    "Mameluke": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Mameluke_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Siege weapons",
+            "mounted archers except Camel Archers",
+            "melee units especially cavalry"
+        ],
+        "weak_vs": [
+            "Foot archers",
+            "Teutonic Knights",
+            "Camel Riders",
+            "Camel Archers",
+            "Monks"
+        ],
+        "image_name": "MamelukeIcon-DE.png"
+    },
+    "Teutonic Knight": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Teutonic_Knight",
+        "strong_vs": [
+            "Skirmishers",
+            "melee units",
+            "buildings"
+        ],
+        "weak_vs": [
+            "Archers",
+            "Scorpions",
+            "Mangonels",
+            "Monks",
+            "Cataphracts",
+            "Leiciai",
+            "Obuchs",
+            "Jaguar Warriors",
+            "Samurai",
+            "War Elephants",
+            "Dravidians' infantry with Wootz Steel researched"
+        ],
+        "image_name": "TeutonicKnightIcon-DE.png"
+    },
+    "Janissary": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Janissary_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Infantry",
+            "buildings"
+        ],
+        "weak_vs": [
+            "Skirmishers",
+            "Scorpions",
+            "Mangonels",
+            "Huskarls",
+            "Condottieri",
+            "Bombard Cannons",
+            "Winged Hussars"
+        ],
+        "image_name": "JanissaryIcon-DE.png"
+    },
+    "Berserk": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Berserk",
+        "strong_vs": [
+            "Skirmishers",
+            "Halberdiers",
+            "Camel Riders",
+            "Eagle Warriors",
+            "buildings",
+            "Light Cavalry"
+        ],
+        "weak_vs": [
+            "Cataphracts",
+            "Jaguar Warriors",
+            "Boyars",
+            "Samurai",
+            "Teutonic Knights",
+            "archer units",
+            "Throwing Axemen"
+        ],
+        "image_name": "BerserkIcon-DE.png"
+    },
+    "Mangudai": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Mangudai_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Infantry",
+            "Villagers",
+            "siege weapons"
+        ],
+        "weak_vs": [
+            "Genoese Crossbowmen",
+            "Huskarls",
+            "Mamelukes",
+            "Camel Riders",
+            "Skirmishers",
+            "Eagle Warriors",
+            "Camel Archers",
+            "Paladins",
+            "Samurai",
+            "Kamayuks"
+        ],
+        "image_name": "MangudaiIcon-DE.png"
+    },
+    "Longboat": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Longboat_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Transport Ships",
+            "Fishing Ships",
+            "buildings",
+            "land units in the shoreline and shallows",
+            "Turtle Ships (hit-and-run only)",
+            "Cannon Galleons",
+            "Thirisadai (equal resources only)"
+        ],
+        "weak_vs": [
+            "Fire Ships (only in small groups)",
+            "Demolition Ships",
+            "Samurai (in the shallows)",
+            "towers",
+            "Castles",
+            "ranged siege units on the shoreline",
+            "Caravels (in large fleet battles)"
+        ],
+        "image_name": "LongboatIcon-DE.png"
+    },
+    "War Wagon": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/War_Wagon_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Infantry",
+            "archers",
+            "buildings"
+        ],
+        "weak_vs": [
+            "Cavalry",
+            "Genoese Crossbowmen",
+            "Huskarls",
+            "Mamelukes",
+            "Camel Riders",
+            "Skirmishers",
+            "Eagle Warriors",
+            "Mangonels",
+            "Monks"
+        ],
+        "image_name": "WarWagonIcon-DE.png"
+    },
+    "Turtle Ship": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Turtle_Ship",
+        "strong_vs": [
+            "Ships at close distance",
+            "buildings on the shoreline",
+            "units on the shoreline or shallows"
+        ],
+        "weak_vs": [
+            "Bombard Cannons",
+            "Monks",
+            "Castles",
+            "towers",
+            "Condottieri (in the shallows)"
+        ],
+        "image_name": "TurtleShipIcon-DE.png"
+    },
+    "Jaguar Warrior": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Jaguar_Warrior",
+        "strong_vs": [
+            "Skirmishers",
+            "infantry",
+            "buildings",
+            "Camel Riders"
+        ],
+        "weak_vs": [
+            "Archers",
+            "Scorpions",
+            "Mangonels",
+            "heavy cavalry"
+        ],
+        "image_name": "JaguarWarriorIcon-DE.png"
+    },
+    "Tarkan": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Tarkan",
+        "strong_vs": [
+            "Archers",
+            "siege weapons",
+            "Light Cavalry",
+            "buildings"
+        ],
+        "weak_vs": [
+            "Infantry",
+            "heavy cavalry",
+            "Genoese Crossbowmen",
+            "Mamelukes",
+            "Camel Riders"
+        ],
+        "image_name": "TarkanIcon-DE.png"
+    },
+    "Missionary": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Missionary_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Slow non-ranged units",
+            "buildings without conversion defense",
+            "Knights"
+        ],
+        "weak_vs": [
+            "Archers",
+            "Eagle Warriors",
+            "Light Cavalry",
+            "Camel Riders",
+            "Halberdiers",
+            "Genoese Crossbowmen",
+            "Towers",
+            "Castles"
+        ],
+        "image_name": "MissionaryIcon-DE.png"
+    },
+    "Conquistador": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Conquistador_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Infantry",
+            "Rams",
+            "Buildings"
+        ],
+        "weak_vs": [
+            "Genoese Crossbowmen",
+            "Mamelukes",
+            "Camel Riders",
+            "Skirmishers",
+            "Genitours",
+            "Camel Archers"
+        ],
+        "image_name": "ConquistadorIcon-DE.png"
+    },
+    "Plumed Archer": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Plumed_Archer",
+        "strong_vs": [
+            "Infantry",
+            "archers",
+            "Villagers",
+            "Hand Cannoneers",
+            "Camel Riders",
+            "Mamelukes"
+        ],
+        "weak_vs": [
+            "Skirmishers",
+            "siege weapons",
+            "cavalry",
+            "Huskarls",
+            "Rattan Archers",
+            "Genitours",
+            "War Wagons"
+        ],
+        "image_name": "PlumedArcherIcon-DE.png"
+    },
+    "Slinger": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Slinger_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Infantry",
+            "Villagers"
+        ],
+        "weak_vs": [
+            "Skirmishers",
+            "cavalry",
+            "Genitours",
+            "Rattan Archers",
+            "Siege weapons"
+        ],
+        "image_name": "SlingerIcon-DE.png"
+    },
+    "Genoese Crossbowman": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Genoese_Crossbowman",
+        "strong_vs": [
+            "Cavalry",
+            "mounted archers",
+            "infantry"
+        ],
+        "weak_vs": [
+            "Foot archers (situationally)",
+            "siege weapons",
+            "Huskarls",
+            "Eagle Warriors",
+            "Ghulams",
+            "Skirmishers"
+        ],
+        "image_name": "GenoeseCrossbowmanIcon-DE.png"
+    },
+    "Condottiero": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Condottiero",
+        "strong_vs": [
+            "Skirmishers",
+            "Hand Cannoneers",
+            "Conquistadors",
+            "Janissaries",
+            "siege weapons",
+            "Bombard Towers",
+            "Bombard Cannons",
+            "Light Cavalry",
+            "Camel Riders",
+            "Hussite Wagons"
+        ],
+        "weak_vs": [
+            "Archers",
+            "Scorpions",
+            "Knights",
+            "Boyars",
+            "Teutonic Knights",
+            "Samurai",
+            "Cataphracts",
+            "Jaguar Warriors",
+            "Slingers",
+            "War Elephants",
+            "Battle Elephants"
+        ],
+        "image_name": "CondottieroIcon-DE.png"
+    },
+    "Kamayuk": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Kamayuk",
+        "strong_vs": [
+            "Skirmishers",
+            "cavalry (except Cataphracts)",
+            "Spearmen",
+            "Eagle Warriors"
+        ],
+        "weak_vs": [
+            "Plumed Archers",
+            "Scorpions",
+            "Mangonels",
+            "Hand Cannoneers",
+            "Janissaries",
+            "Slingers",
+            "Cataphracts",
+            "Teutonic Knights",
+            "Jaguar Warriors",
+            "Samurai",
+            "mounted archers",
+            "Mamelukes",
+            "Rattan Archers"
+        ],
+        "image_name": "KamayukIcon-DE.png"
+    },
+    "Magyar Huszar": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Magyar_Huszar",
+        "strong_vs": [
+            "Siege weapons",
+            "archers",
+            "other light cavalry"
+        ],
+        "weak_vs": [
+            "Boyars",
+            "Pikemen",
+            "Kamayuks",
+            "Berserks",
+            "Genoese Crossbowmen",
+            "Teutonic Knights",
+            "Mamelukes",
+            "Camel Riders",
+            "Samurai"
+        ],
+        "image_name": "MagyarHuszarIcon-DE.png"
+    },
+    "Boyar": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Boyar_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Skirmishers",
+            "melee units",
+            "siege weapons"
+        ],
+        "weak_vs": [
+            "Pikemen",
+            "Kamayuks",
+            "Teutonic Knights",
+            "Mamelukes",
+            "Camel Riders",
+            "Monks",
+            "War Elephants",
+            "Genoese Crossbowmen",
+            "Samurai",
+            "Leiciai",
+            "Obuchs"
+        ],
+        "image_name": "BoyarIcon-DE.png"
+    },
+    "Imperial Camel Rider": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Imperial_Camel_Rider",
+        "strong_vs": [
+            "Skirmishers",
+            "siege weapons",
+            "mounted archers",
+            "cavalry"
+        ],
+        "weak_vs": [
+            "Foot archers",
+            "Halberdiers",
+            "Kamayuks",
+            "Teutonic Knights",
+            "Genoese Crossbowmen",
+            "Berserks",
+            "Elite Cataphracts"
+        ],
+        "image_name": "ImperialCamelRiderIcon-DE.png"
+    },
+    "Camel Archer": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Camel_Archer_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Slow non-ranged units",
+            "Cavalry Archers",
+            "Conquistadors"
+        ],
+        "weak_vs": [
+            "Huskarls",
+            "Skirmishers",
+            "Eagle Warriors",
+            "Mangonels",
+            "Camel Riders"
+        ],
+        "image_name": "CamelArcherIcon-DE.png"
+    },
+    "Genitour": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Genitour",
+        "strong_vs": [
+            "Archers",
+            "Monks",
+            "most Infantry"
+        ],
+        "weak_vs": [
+            "Camel Riders",
+            "siege units",
+            "Huskarls",
+            "Eagle Warriors",
+            "Woad Raiders",
+            "Ghulams"
+        ],
+        "image_name": "GenitourIcon-DE.png"
+    },
+    "Gbeto": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Gbeto",
+        "strong_vs": [
+            "Skirmishers",
+            "Pikemen",
+            "Cavalry Archers",
+            "Battering Rams",
+            "infantry",
+            "Light Cavalry"
+        ],
+        "weak_vs": [
+            "Archers",
+            "Scorpions",
+            "Mangonels",
+            "Boyars",
+            "Teutonic Knights"
+        ],
+        "image_name": "GbetoIcon-DE.png"
+    },
+    "Shotel Warrior": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Shotel_Warrior_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Buildings",
+            "Villagers",
+            "Skirmishers",
+            "Pikemen",
+            "Eagle Warriors",
+            "Light Cavalry",
+            "Monks",
+            "rams"
+        ],
+        "weak_vs": [
+            "Archers",
+            "Scorpions",
+            "Cavalry Archers",
+            "Mangonels",
+            "Hand Cannoneers",
+            "Janissaries",
+            "Conquistadors",
+            "heavy cavalry and infantry"
+        ],
+        "image_name": "Shotelwarrioricon-DE.png"
+    },
+    "Caravel": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Caravel_(Age_of_Empires_II)",
+        "strong_vs": [
+            "buildings and melee units in the shoreline",
+            "Cannon Galleons",
+            "units in dense formation",
+            "Longboats"
+        ],
+        "weak_vs": [
+            "Fire Ships",
+            "Turtle Ships",
+            "Towers",
+            "Castles",
+            "Mangonels",
+            "Bombard Cannons",
+            "Thirisadais"
+        ],
+        "image_name": "CaravelIcon-DE.png"
+    },
+    "Organ Gun": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Organ_Gun_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Villagers",
+            "Skirmishers",
+            "mobs of units"
+        ],
+        "weak_vs": [
+            "Condottieri",
+            "cavalry",
+            "Onagers",
+            "Bombard Cannons",
+            "Huskarls",
+            "Mangudai",
+            "Eagle Warriors"
+        ],
+        "image_name": "OrganGunIcon-DE.png"
+    },
+    "Arambai": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Arambai",
+        "strong_vs": [
+            "Infantry",
+            "Villagers",
+            "Monks",
+            "units in dense formation"
+        ],
+        "weak_vs": [
+            "Archers (especially Skirmishers)",
+            "Kamayuks",
+            "Huskarls",
+            "Mamelukes",
+            "Camel Riders",
+            "Eagle Warriors"
+        ],
+        "image_name": "Arambaiicon-DE.png"
+    },
+    "Ballista Elephant": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Ballista_Elephant",
+        "strong_vs": [
+            "Archers",
+            "massed units",
+            "especially infantry",
+            "buildings",
+            "short-ranged ships"
+        ],
+        "weak_vs": [
+            "Kamayuks",
+            "Huskarls",
+            "Mamelukes",
+            "Camel Riders",
+            "Eagle Warriors",
+            "Halberdiers",
+            "Samurai",
+            "Mangonels",
+            "Bombard Cannons",
+            "Scorpions",
+            "Rams",
+            "Magyar Huszars",
+            "Mangudai",
+            "Flaming Camels",
+            "Monks"
+        ],
+        "image_name": "Ballistaelephanticon-DE.png"
+    },
+    "Karambit Warrior": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Karambit_Warrior",
+        "strong_vs": [
+            "Skirmishers",
+            "Halberdiers",
+            "Eagle Warriors",
+            "Rams",
+            "Ghulams",
+            "Light Cavalry"
+        ],
+        "weak_vs": [
+            "Archers",
+            "gunpowder units",
+            "Scorpions",
+            "Mangonels",
+            "heavy cavalry and elephants",
+            "heavy infantry"
+        ],
+        "image_name": "Karambitwarrioricon-DE.png"
+    },
+    "Rattan Archer": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Rattan_Archer",
+        "strong_vs": [
+            "Archers",
+            "Cavalry Archers",
+            "infantry",
+            "Villagers"
+        ],
+        "weak_vs": [
+            "Cavalry",
+            "Skirmishers",
+            "Genitours",
+            "Huskarls",
+            "Eagle Warriors",
+            "siege weapons"
+        ],
+        "image_name": "Rattanarchericon-DE.png"
+    },
+    "Imperial Skirmisher": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Imperial_Skirmisher",
+        "strong_vs": [
+            "Archers",
+            "Pikemen"
+        ],
+        "weak_vs": [
+            "Melee units",
+            "siege units"
+        ],
+        "image_name": "Imperialskirmishericon-DE.png"
+    },
+    "Konnik": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Konnik",
+        "strong_vs": [
+            "Infantry",
+            "archers (Mounted)",
+            "siege weapons (Mounted)",
+            "Light Cavalry",
+            "Monks (after Heresy",
+            "especially with a Teuton ally)"
+        ],
+        "weak_vs": [
+            "Archers (Dismounted)",
+            "Boyars",
+            "Pikemen (Mounted)",
+            "Kamayuks",
+            "Berserks",
+            "Genoese Crossbowmen",
+            "Teutonic Knights",
+            "Mamelukes",
+            "Camel Riders (Mounted)",
+            "War Elephants",
+            "Battle Elephants",
+            "ranged siege weapons (Dismounted)",
+            "Samurai",
+            "Cataphract (Dismounted)",
+            "Monks (before Heresy)",
+            "Flemish Militia"
+        ],
+        "image_name": "Konnikicon.png"
+    },
+    "Kipchak": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Kipchak",
+        "strong_vs": [
+            "Slow and non-ranged units",
+            "rams",
+            "Monks"
+        ],
+        "weak_vs": [
+            "Genoese Crossbowmen",
+            "Skirmishers",
+            "Genitours",
+            "siege weapons camel units",
+            "Rattan Archers"
+        ],
+        "image_name": "Kipchakicon.png"
+    },
+    "Leitis": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Leitis",
+        "strong_vs": [
+            "Melee units (especially Serjeants",
+            "Teutonic Knights",
+            "and Boyars)"
+        ],
+        "weak_vs": [
+            "Pikemen",
+            "Kamayuks",
+            "Genoese Crossbowmen",
+            "Mamelukes",
+            "Camel Riders",
+            "Monks",
+            "War Elephants",
+            "Battle Elephants",
+            "Samurai",
+            "large groups of archers."
+        ],
+        "image_name": "Leitisicon.png"
+    },
+    "Keshik": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Keshik_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Infantry",
+            "Archers",
+            "Villagers",
+            "Siege weapons",
+            "Light Cavalry"
+        ],
+        "weak_vs": [
+            "Boyars",
+            "Pikemen",
+            "Kamayuks",
+            "Berserks",
+            "Genoese Crossbowmen",
+            "Teutonic Knights",
+            "Mamelukes",
+            "Camel Riders",
+            "Monks",
+            "War Elephants",
+            "Knights"
+        ],
+        "image_name": "Keshikicon.png"
+    },
+    "Flaming Camel": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Flaming_Camel",
+        "strong_vs": [
+            "Buildings",
+            "Cavalry especially Elephants"
+        ],
+        "weak_vs": [
+            "Foot archers",
+            "Castles",
+            "towers",
+            "Monks",
+            "infantry"
+        ],
+        "image_name": "Flaming camel icon.png"
+    },
+    "Coustillier": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Coustillier",
+        "strong_vs": [
+            "Infantry",
+            "archers",
+            "Villagers",
+            "siege weapons",
+            "Cavalry Archers",
+            "Light Cavalry"
+        ],
+        "weak_vs": [
+            "Kamayuks",
+            "Genoese Crossbowmen",
+            "Mamelukes",
+            "Camel Riders",
+            "Samurai",
+            "War Elephants",
+            "Boyars",
+            "Halberdiers (if massed)",
+            "Monks (if kept away)"
+        ],
+        "image_name": "Aoe2-icon-coustillier.png"
+    },
+    "Flemish Militia": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Flemish_Militia",
+        "strong_vs": [
+            "Skirmishers",
+            "cavalry",
+            "Spearmen",
+            "rams",
+            "Camel Riders"
+        ],
+        "weak_vs": [
+            "Plumed Archers",
+            "Scorpions",
+            "Mangonels",
+            "Hand Cannoneers",
+            "Janissaries",
+            "Monks",
+            "Slingers",
+            "Cataphracts",
+            "Teutonic Knights",
+            "Samurai",
+            "Organ Guns"
+        ],
+        "image_name": "Aoe2-icon-flemish-militia.png"
+    },
+    "Serjeant": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Serjeant",
+        "strong_vs": [
+            "Archers",
+            "Infantry with less melee armor",
+            "Skirmishers",
+            "buildings",
+            "Hussars",
+            "Camel Riders"
+        ],
+        "weak_vs": [
+            "Scorpions",
+            "Mangonels",
+            "Hand Cannoneers",
+            "Conquistadors",
+            "Janissaries",
+            "Slingers",
+            "Monks",
+            "Cataphracts",
+            "Leiciai",
+            "Samurai",
+            "Teutonic Knights",
+            "Boyars",
+            "Jaguar Warriors",
+            "Obuchs",
+            "War Elephants",
+            "Battle Elephants"
+        ],
+        "image_name": "Aoe2-icon-serjeant.png"
+    },
+    "Hussite Wagon": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Hussite_Wagon",
+        "strong_vs": [
+            "Infantry units",
+            "Archer units"
+        ],
+        "weak_vs": [
+            "Mangonel-line and Bombard Cannon-line,cavalry",
+            "Throwing Axemen",
+            "Huskarls",
+            "Samurai",
+            "Condottieri",
+            "Mangudai"
+        ],
+        "image_name": "Aoe2-icon-hussite-wagon.png"
+    },
+    "Houfnice": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Houfnice",
+        "strong_vs": [
+            "Buildings",
+            "units in dense formations",
+            "slow moving units",
+            "ships",
+            "foot archers",
+            "siege weapons"
+        ],
+        "weak_vs": [
+            "Melee units at close range",
+            "especially Condottieri",
+            "Eagle Warriors",
+            "and Magyar Huszars",
+            "Mangudai"
+        ],
+        "image_name": "Aoe2-icon--houfnice.png"
+    },
+    "Obuch": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Obuch",
+        "strong_vs": [
+            "Skirmishers",
+            "Camel Riders",
+            "buildings",
+            "Light Cavalry",
+            "most infantry",
+            "heavily-armored units"
+        ],
+        "weak_vs": [
+            "Samurai",
+            "gunpowder and mounted archers",
+            "Scorpions",
+            "Berserks",
+            "Cataphracts",
+            "Jaguar Warriors",
+            "Slingers",
+            "Organ Guns",
+            "Throwing Axemen",
+            "Mamelukes",
+            "Gbetos",
+            "Battle Elephants and War Elephants"
+        ],
+        "image_name": "Aoe2-icon--obuch.png"
+    },
+    "Ratha": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Ratha",
+        "strong_vs": [
+            "Archers",
+            "siege weapons (Melee)",
+            "Slow and non ranged units (Ranged)",
+            "Villagers"
+        ],
+        "weak_vs": [
+            "Teutonic Knights ",
+            "War Elephants",
+            "Battle Elephants (Melee)",
+            "Skirmishers",
+            "Rattan Archer",
+            "Mangonels",
+            "Scorpions (Ranged)",
+            "Huskarls",
+            "Samurai",
+            "Eagle Warriors",
+            "Pikemen",
+            "Kamayuks",
+            "Camel units",
+            "Genoese Crossbowmen",
+            "Ghulams",
+            "Paladins",
+            "Boyars",
+            "Monks"
+        ],
+        "image_name": "Aoe2de ratha ranged.png"
+    },
+    "Urumi Swordsman": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Urumi_Swordsman_(Age_of_Empires_II)",
+        "strong_vs": [
+            "Infantry",
+            "Skirmishers",
+            "Light Cavalry"
+        ],
+        "weak_vs": [
+            "Archers",
+            "Scorpions",
+            "Cataphracts",
+            "War Elephants",
+            "Battle Elephants",
+            "Monks",
+            "Ballista Elephants"
+        ],
+        "image_name": "Aoe2de Urumi.png"
+    },
+    "Thirisadai": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Thirisadai",
+        "strong_vs": [
+            "Galleons",
+            "Cannon Galleons",
+            "Caravels",
+            "units and buildings on the shoreline"
+        ],
+        "weak_vs": [
+            "Castles",
+            "towers",
+            "Fire Ships (if massed)",
+            "Demolition Ships (equal resources)",
+            "Longboats (equal resources)",
+            "Turtle Ships",
+            "Onagers",
+            "Bombard Cannons",
+            "Monks"
+        ],
+        "image_name": "Aoe2de Thirisadai.png"
+    },
+    "Camel Scout": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Camel_Scout"
+    },
+    "Chakram Thrower": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Chakram_Thrower",
+        "strong_vs": [
+            "Slow and non ranged units",
+            "Skirmishers",
+            "Monks"
+        ],
+        "weak_vs": [
+            "Archers",
+            "Ranged siege weapons",
+            "Heavy infantry",
+            "Heavy cavalry",
+            "Shrivamsha Rider"
+        ],
+        "image_name": "Aoe2de Chakram.png"
+    },
+    "Shrivamsha Rider": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Shrivamsha_Rider",
+        "strong_vs": [
+            "Archers",
+            "siege weapons",
+            "Villagers",
+            "Gbetos",
+            "Throwing Axemen",
+            "Chakram Throwers",
+            "Mamelukes",
+            "Trade Carts"
+        ],
+        "weak_vs": [
+            "Pikemen",
+            "Kamayuks",
+            "Camel Riders",
+            "Samurai",
+            "most melee units"
+        ],
+        "image_name": "Aoe2de shrivamsha rider.png"
+    },
+    "Ghulam": {
+        "wiki_link": "https://ageofempires.fandom.com/wiki/Ghulam",
+        "strong_vs": [
+            "Foot archers",
+            "Villagers",
+            "siege units",
+            "Eagle Warriors"
+        ],
+        "weak_vs": [
+            "Champions",
+            "Jaguar Warriors",
+            "Samurai",
+            "Teutonic Knights",
+            "heavy cavalry",
+            "Monks"
+        ],
+        "image_name": "Aoe2de Ghulam.png"
+    }
+}
