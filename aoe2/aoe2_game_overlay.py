@@ -5,8 +5,8 @@ from enum import Enum
 from threading import Event
 from random import choice
 
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import Qt
+from PyQt6.QtWidgets import QApplication
+from PyQt6.QtCore import Qt
 from playsound import playsound
 
 from common.label_display import QLabelSettings
@@ -122,13 +122,13 @@ class AoE2GameOverlay(RTSGameOverlay):
         if self.selected_panel != PanelID.CONFIG:
             QApplication.restoreOverrideCursor()
         else:
-            QApplication.setOverrideCursor(Qt.ArrowCursor)
+            QApplication.setOverrideCursor(Qt.CursorShape.ArrowCursor)
 
         # window is transparent to mouse events, except for the configuration when not hidden
-        self.setAttribute(Qt.WA_TransparentForMouseEvents, self.hidden or (self.selected_panel != PanelID.CONFIG))
+        self.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents, self.hidden or (self.selected_panel != PanelID.CONFIG))
 
         # remove the window title and stay always on top
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
 
         # hide the elements by default
         self.hide_elements()
@@ -393,6 +393,7 @@ class AoE2GameOverlay(RTSGameOverlay):
             self.reminder_checkbox.show()
             self.build_order_step.show()
             self.build_order_previous_button.show()
+            self.build_order_counter_search_button.show()
             self.build_order_next_button.show()
 
         self.next_panel_button.show()
@@ -442,6 +443,9 @@ class AoE2GameOverlay(RTSGameOverlay):
 
             next_x -= (self.build_order_step.width() + horizontal_spacing)
             self.build_order_step.move(next_x, border_size)
+
+            next_x -= (self.build_order_counter_search_button.width() + horizontal_spacing)
+            self.build_order_counter_search_button.move(next_x, border_size)
 
             next_x -= (self.reminder_checkbox.width() + horizontal_spacing)
             self.reminder_checkbox.move(next_x, border_size)
@@ -778,6 +782,7 @@ class AoE2GameOverlay(RTSGameOverlay):
             elif self.selected_panel == PanelID.BUILD_ORDER:  # build order specific buttons
                 self.build_order_previous_button.hovering_show(self.is_mouse_in_roi_widget)
                 self.build_order_next_button.hovering_show(self.is_mouse_in_roi_widget)
+                self.build_order_counter_search_button.hovering_show(self.is_mouse_in_roi_widget)
                 self.reminder_checkbox.hovering_show(self.is_mouse_in_roi_widget)
 
                 # tooltip display

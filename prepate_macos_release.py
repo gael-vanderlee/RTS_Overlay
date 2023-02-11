@@ -4,7 +4,7 @@ game_folder="aoe2"
 # main nuitka command to run
 main_command = ('cmd /c "python -m nuitka'
                 ' --standalone'
-                ' --plugin-enable=pyqt5'
+                ' --plugin-enable=PyQt6'
                 ' --onefile'
                 ' --macos-create-app-bundle'
                 f' --include-data-dir=common=common'

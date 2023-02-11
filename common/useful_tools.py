@@ -1,8 +1,8 @@
 import os
 
-from PyQt5.QtWidgets import QWidget, QPushButton, QKeySequenceEdit, QMessageBox, QCheckBox
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QSize
+from PyQt6.QtWidgets import QWidget, QPushButton, QKeySequenceEdit, QMessageBox, QCheckBox
+from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import Qt, QSize
 
 
 def widget_x_end(widget: QWidget) -> int:
@@ -134,7 +134,7 @@ class TwinHoverButton:
 
         # twin hovering button
         self.hovering_button = QPushButton()  # when hovering the mouse on mouse transparent window
-        self.hovering_button.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.CoverWindow)
+        self.hovering_button.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.CoverWindow)
 
         # update the icon and the size
         self.update_icon_size(icon=icon, button_qsize=button_qsize)
@@ -333,8 +333,8 @@ def popup_message(title: str, msg_text: str):
     msg = QMessageBox()
     msg.setWindowTitle(title)
     msg.setText(msg_text)
-    msg.setIcon(QMessageBox.Information)
-    msg.exec_()
+    msg.setIcon(QMessageBox.Icon.Information)
+    msg.exec()
 
 
 class Checkbox:
@@ -356,15 +356,15 @@ class Checkbox:
 
         # main button
         self.parent = parent
-        self.button = QCheckBox("Audio reminders", self.parent)
+        self.button = QCheckBox("Ding", self.parent)
         self.button.setStyleSheet(
             f"color: rgb({layout.color_default[0]}, {layout.color_default[1]}, {layout.color_default[2]})"
         )
-        self.button.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        self.button.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
 
         # twin hovering button
         self.hovering_button = QCheckBox()  # when hovering the mouse on mouse transparent window
-        self.hovering_button.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        self.hovering_button.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
 
         # update the function to activate when clicking on the button
         self.update_click_connect(click_connect=click_connect)
@@ -474,7 +474,7 @@ class Checkbox:
         ----------
         is_mouse_in_roi_widget    function to check if hovering on the button
         """
-        from PyQt5.QtCore import QPoint
+        from PyQt6.QtCore import QPoint
         if self.button.isVisible():  # only when button is visible
             if is_mouse_in_roi_widget(self.button):
                 self.hovering_button.move(self.parent.pos() + self.button.pos() + QPoint(0, 8))

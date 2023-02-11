@@ -1,8 +1,8 @@
 # Game overlay application for Age of Empires II (AoE2)
 import sys
 import pathlib
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QTimer
+from PyQt6.QtWidgets import QApplication
+from PyQt6.QtCore import QTimer
 
 from aoe2.aoe2_game_overlay import AoE2GameOverlay
 

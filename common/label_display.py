@@ -1,9 +1,9 @@
 import os
 from typing import Union
 
-from PyQt5.QtWidgets import QLabel, QMainWindow
-from PyQt5.QtGui import QPixmap, QFont
-from PyQt5.QtCore import Qt, QTimer
+from PyQt6.QtWidgets import QLabel, QMainWindow
+from PyQt6.QtGui import QPixmap, QFont
+from PyQt6.QtCore import Qt, QTimer
 from typing import Optional
 
 
@@ -342,13 +342,13 @@ class MultiQLabelDisplay:
                         if image_height is not None:
                             if image_width is not None:  # scale to width and height
                                 label.setPixmap(QPixmap(image_path).scaled(image_width, image_height,
-                                                                           transformMode=Qt.SmoothTransformation))
+                                                                           transformMode=Qt.TransformationMode.SmoothTransformation))
                             else:  # scale to height
                                 label.setPixmap(
-                                    QPixmap(image_path).scaledToHeight(image_height, mode=Qt.SmoothTransformation))
+                                    QPixmap(image_path).scaledToHeight(image_height, mode=Qt.TransformationMode.SmoothTransformation))
                         elif image_width is not None:  # scale to width
                             label.setPixmap(
-                                QPixmap(image_path).scaledToWidth(image_width, mode=Qt.SmoothTransformation))
+                                QPixmap(image_path).scaledToWidth(image_width, mode=Qt.TransformationMode.SmoothTransformation))
                     else:  # image not found
                         label.setText(split_line[split_id])
                         label.setFont(QFont(self.font_police, self.font_size))
@@ -532,10 +532,10 @@ class MultiQLabelWindow(MultiQLabelDisplay):
         self.window.setWindowOpacity(opacity)
 
         # set if window is transparent to mouse events
-        self.window.setAttribute(Qt.WA_TransparentForMouseEvents, transparent_mouse)
+        self.window.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents, transparent_mouse)
 
         # remove the window title and stay always on top
-        self.window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        self.window.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
 
     def update_settings(self, font_police: str, font_size: int, border_size: int, vertical_spacing: int,
                         color_default: list, color_background: list = (0, 0, 0), opacity: float = 1.0,
@@ -562,7 +562,7 @@ class MultiQLabelWindow(MultiQLabelDisplay):
         self.window.setWindowOpacity(opacity)
 
         # window is transparent to mouse events
-        self.window.setAttribute(Qt.WA_TransparentForMouseEvents, transparent_mouse)
+        self.window.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents, transparent_mouse)
 
     def clear(self):
         """Hide and remove all labels"""

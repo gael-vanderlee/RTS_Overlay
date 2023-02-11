@@ -3,9 +3,9 @@ import os
 from enum import Enum
 from threading import Event
 
-from PyQt5.QtWidgets import QComboBox, QApplication
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QSize, Qt
+from PyQt6.QtWidgets import QComboBox, QApplication
+from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import QSize, Qt
 
 from common.label_display import QLabelSettings
 from common.useful_tools import cut_name_length, widget_x_end, widget_y_end

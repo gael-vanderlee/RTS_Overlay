@@ -10,6 +10,7 @@ class RTSConfigurationLayout(SettingsSubclass):
         # list of scaling values [%]
         self.scaling_list: list = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 175, 200, 225, 250, 275, 300]
         self.build_order_search_size: list = [160, 30]  # size of the search bar for the build order
+        self.counter_search_size: list = [250, 30]  # size of the search bar for the build order
         self.build_order_selection_vertical_spacing: int = 3  # vertical spacing between two build order suggestions
         self.selected_build_order_color: list = [230, 159, 0]  # color for selected build order
         self.hovering_build_order_color: list = [204, 102, 0]  # color for build order hovered by mouse
@@ -86,6 +87,7 @@ class RTSImages(SettingsSubclass):
         self.quit: str = 'action_button/leave.png'  # quit the overlay
         self.save: str = 'action_button/save.png'  # save the settings
         self.load: str = 'action_button/load.png'  # load the settings
+        self.search: str = 'action_button/search.png'  # search magnifying glass
         self.config_hotkeys: str = 'action_button/gears.png'  # configure the hotkeys
         self.write_build_order: str = 'action_button/feather.png'  # write a build order
         self.time: str = 'icon/time.png'  # time for build order

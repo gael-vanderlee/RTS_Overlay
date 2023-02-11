@@ -6,10 +6,10 @@ import subprocess
 from copy import deepcopy
 from thefuzz import process
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QShortcut, QLineEdit, QPushButton
-from PyQt5.QtWidgets import QWidget, QComboBox, QDesktopWidget, QTextEdit, QCheckBox
-from PyQt5.QtGui import QKeySequence, QFont, QIcon, QCursor, QPixmap
-from PyQt5.QtCore import Qt, QPoint, QSize
+from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QPushButton
+from PyQt6.QtWidgets import QWidget, QComboBox, QTextEdit, QCheckBox
+from PyQt6.QtGui import QKeySequence, QFont, QIcon, QCursor, QPixmap, QShortcut
+from PyQt6.QtCore import Qt, QPoint, QSize
 
 from common.build_order_tools import get_build_orders, check_build_order_key_values, is_build_order_new
 from common.label_display import MultiQLabelDisplay, QLabelSettings, MultiQLabelWindow
@@ -17,6 +17,8 @@ from common.useful_tools import TwinHoverButton, scale_int, scale_list_int, set_
     OverlaySequenceEdit, widget_x_end, widget_y_end, popup_message, Checkbox
 from common.keyboard_mouse import KeyboardMouseManagement
 from common.rts_settings import RTSHotkeys, KeyboardMouse
+
+from aoe2.personal_additions import CountersSearchWindow
 
 
 class HotkeysWindow(QMainWindow):
@@ -139,7 +141,7 @@ class HotkeysWindow(QMainWindow):
 
             # icon for the mouse
             mouse_icon = QLabel('', self)
-            mouse_icon.setPixmap(QPixmap(mouse_image).scaledToHeight(mouse_height, mode=Qt.SmoothTransformation))
+            mouse_icon.setPixmap(QPixmap(mouse_image).scaledToHeight(mouse_height, mode=Qt.TransformationMode.SmoothTransformation))
             mouse_icon.adjustSize()
             mouse_icon.move(widget_x_end(hotkey) + mouse_spacing, hotkey.y())
             mouse_icon.show()
@@ -219,7 +221,7 @@ class BuildOrderWindow(QMainWindow):
         self.text_input.setPlainText(edit_init_text)
         self.text_input.setFont(QFont(font_police, font_size))
         self.text_input.setStyleSheet(style_text_edit)
-        self.text_input.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.text_input.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.text_input.resize(edit_width, edit_height)
         self.text_input.move(border_size, border_size)
         self.text_input.show()
@@ -331,7 +333,7 @@ class RTSGameOverlay(QMainWindow):
             print('Loading default parameters.')
 
             # check that the upper right corner is inside the screen
-            screen_size = QDesktopWidget().screenGeometry(-1)
+            screen_size = self.screen().geometry()
 
             if self.unscaled_settings.layout.upper_right_position[0] >= screen_size.width():
                 print(f'Upper right corner X position set to {(screen_size.width() - 20)} (to stay inside screen).')
@@ -487,6 +489,11 @@ class RTSGameOverlay(QMainWindow):
             icon=QIcon(os.path.join(self.directory_common_pictures, images.build_order_next_step)),
             button_qsize=action_button_qsize, tooltip='next build order step')
 
+        self.build_order_counter_search_button = TwinHoverButton(
+            parent=self, click_connect=self.build_order_show_searchbar,
+            icon=QIcon(os.path.join(self.directory_common_pictures, images.search)),
+            button_qsize=action_button_qsize, tooltip='Search counters')
+
         # self.reminder_checkbox = QCheckBox("", self)
         self.reminder_checkbox = Checkbox(
             parent=self, click_connect=None, layout=layout)
@@ -522,6 +529,9 @@ class RTSGameOverlay(QMainWindow):
 
         # add build order
         self.panel_add_build_order = None
+
+        # Counter panel
+        self.panel_counters = None
 
         # initialization done
         self.init_done = True
@@ -649,6 +659,9 @@ class RTSGameOverlay(QMainWindow):
             QIcon(os.path.join(self.directory_common_pictures, images.build_order_previous_step)), action_button_qsize)
 
         self.build_order_next_button.update_icon_size(
+            QIcon(os.path.join(self.directory_common_pictures, images.build_order_next_step)), action_button_qsize)
+
+        self.build_order_counter_search_button.update_icon_size(
             QIcon(os.path.join(self.directory_common_pictures, images.build_order_next_step)), action_button_qsize)
 
         # keyboard and mouse global hotkeys
@@ -885,6 +898,7 @@ class RTSGameOverlay(QMainWindow):
         self.next_panel_button.close()
         self.build_order_previous_button.close()
         self.build_order_next_button.close()
+        self.build_order_counter_search_button.close()
 
         if (self.panel_config_hotkeys is not None) and self.panel_config_hotkeys.isVisible():
             self.panel_config_hotkeys.close()
@@ -1217,18 +1231,18 @@ class RTSGameOverlay(QMainWindow):
         ----------
         event    mouse event
         """
-        QApplication.setOverrideCursor(Qt.ArrowCursor)  # set arrow cursor
+        QApplication.setOverrideCursor(Qt.CursorShape.ArrowCursor)  # set arrow cursor
 
-        if event.buttons() == Qt.NoButton:  # no button pressed
+        if event.buttons() == Qt.MouseButton.NoButton:  # no button pressed
             self.left_click_start = False
-        elif event.buttons() == Qt.LeftButton:  # pressing the left button
+        elif event.buttons() == Qt.MouseButton.LeftButton:  # pressing the left button
             if not self.left_click_start:  # starting to press the button
                 self.init_x = self.frameGeometry().x()
                 self.init_y = self.frameGeometry().y()
-                self.old_pos = event.globalPos()
+                self.old_pos = event.globalPosition().toPoint()
                 self.left_click_start = True
 
-            delta = QPoint(event.globalPos() - self.old_pos)  # motion of the mouse
+            delta = QPoint(event.globalPosition().toPoint() - self.old_pos)  # motion of the mouse
             self.move(self.init_x + delta.x(), self.init_y + delta.y())  # moving the window accordingly
             # update the window position in the settings (for potential save)
             self.settings.layout.upper_right_position = [widget_x_end(self), self.y()]
@@ -1241,7 +1255,7 @@ class RTSGameOverlay(QMainWindow):
         ----------
         event    mouse event
         """
-        if event.buttons() == Qt.LeftButton:  # pressing the left button
+        if event.buttons() == Qt.MouseButton.LeftButton:  # pressing the left button
             if len(self.valid_build_orders) >= 1:  # at least one build order
                 self.update_mouse()
                 build_order_ids = self.build_order_selection.get_mouse_label_id(
@@ -1286,6 +1300,15 @@ class RTSGameOverlay(QMainWindow):
         self.selected_build_order_step_id = max(0, min(self.selected_build_order_step_id + 1,
                                                        self.selected_build_order_step_count - 1))
         return old_selected_build_order_step_id != self.selected_build_order_step_id
+
+    def build_order_show_searchbar(self):
+            self.build_order_tooltip.clear()  # clear tooltip
+            # self.panel_counters = CountersSearchWindow(self)
+            icon_path = os.path.join(self.directory_common_pictures, self.settings.images.search)
+            self.panel_counters = CountersSearchWindow(self.settings, icon_path)
+
+
+            print("WOOF")
 
     def select_build_order_id(self, build_order_id: int = -1) -> bool:
         """Select build order ID
@@ -1472,6 +1495,7 @@ class RTSGameOverlay(QMainWindow):
         self.build_order_step.hide()
         self.build_order_previous_button.hide()
         self.build_order_next_button.hide()
+        self.build_order_counter_search_button.hide()
         self.reminder_checkbox.hide()
 
         # police, scaling combo
