@@ -1,0 +1,140 @@
+{
+    "name": "Ethiopian Arena FC",
+    "author": "Magnum Donger",
+    "build_order": [{
+            "villager_count": 6,
+            "age": 1,
+            "resources": {
+                "wood": 0,
+                "food": {
+					"Sheep": 6
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Build 2 @other/House_aoe2DE.png@",
+                "Send the first 6 @resource/MaleVillDE.jpg@ to @animal/Sheep_aoe2DE.png@"
+            ]
+        },
+        {
+            "villager_count": 10,
+            "age": 1,
+            "resources": {
+                "wood": 0,
+                "food": {
+					"Sheep": 6,
+					"Berry": 4
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Next 4 @resource/MaleVillDE.jpg@ to @resource/BerryBushDE.png@.",
+                "Lure the first @animal/Boar_aoe2DE.png@."
+            ]
+        },
+        {
+            "villager_count": 12,
+            "age": 1,
+            "resources": {
+                "wood": 0,
+                "food": {
+					"Sheep": 8,
+					"Berry": 4
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Build 2 @other/House_aoe2DE.png@.",
+                "Next 2 @resource/MaleVillDE.jpg@ to @animal/Sheep_aoe2DE.png@."
+            ]
+        },
+        {
+            "villager_count": 18,
+            "age": 1,
+            "resources": {
+                "wood": 6,
+                "food": {
+					"Sheep": 8,
+					"Berry": 4
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Next 6 @resource/MaleVillDE.jpg@ goes to stragglers",
+                "Lure @animal/Deer_aoe2DE.png@",
+                "Lure the second @animal/Boar_aoe2DE.png@.",
+                "Build @lumber_camp/Lumber_camp_aoe2de.png@ when you have enough wood"
+            ]
+        },
+        {
+            "villager_count": 22,
+            "age": 1,
+            "resources": {
+                "wood": 6,
+                "food": {
+					"Sheep": 12,
+					"Berry": 4
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Build a @other/House_aoe2DE.png@",
+                "4 to @animal/Sheep_aoe2DE.png@",
+                "DON'T GET @town_center/LoomDE.png@ click up to @age/FeudalAgeIconDE.png@."
+            ]
+        },
+        {
+            "villager_count": 24,
+            "age": 2,
+            "resources": {
+                "wood": 6,
+                "food": {
+					"Sheep": 14,
+					"Berry": 4
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "2  @resource/MaleVillDE.jpg@ to @resource/Aoe2de_food.png@",
+                "Market + Blacksmith",
+                "Click up"
+            ]
+        },
+        {
+            "villager_count": 24,
+            "age": 2,
+            "resources": {
+                "wood": 14,
+                "food": {
+					"Farms": 6,
+					"Berry": 4
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "8 Sheep to wood.",
+                "6 Sheep to farms."
+            ]
+        },
+        {
+            "villager_count": 24,
+            "age": 3,
+            "resources": {
+                "wood": 14,
+                "food": 10,
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Put down 3 TCs and Bim Bam Boom"
+            ]
+        }
+    ]
+}

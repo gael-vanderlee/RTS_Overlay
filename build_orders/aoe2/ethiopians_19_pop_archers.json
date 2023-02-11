@@ -1,0 +1,146 @@
+{
+    "name": "Ethiopian 19 pop archer",
+    "author": "Hera",
+    "source": "https://www.youtube.com/watch?v=P718AmycruQ&t=477s",
+    "build_order": [{
+            "villager_count": 6,
+            "age": 1,
+            "resources": {
+                "wood": 0,
+                "food": {
+					"Sheep": 6
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Build 2 @other/House_aoe2DE.png@.",
+                "Send the first 6 @resource/MaleVillDE.jpg@ to @animal/Sheep_aoe2DE.png@."
+            ]
+        },
+        {
+            "villager_count": 8,
+            "age": 1,
+            "resources": {
+                "wood": 2,
+                "food": {
+					"Sheep": 6
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Build the first @lumber_camp/Lumber_camp_aoe2de.png@.",
+                "Send the next 2 @resource/MaleVillDE.jpg@ to @resource/Aoe2de_wood.png@."
+            ]
+        },
+        {
+            "villager_count": 12,
+            "age": 1,
+            "resources": {
+                "wood": 2,
+                "food": 10,
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Lure the @animal/Boar_aoe2DE.png@",
+                "Send the next 4 @resource/MaleVillDE.jpg@ to @resource/Aoe2de_food.png@",
+				"Build a @other/House_aoe2DE.png@ with a @resource/Aoe2de_wood.png@ @resource/MaleVillDE.jpg@"
+            ]
+        },
+		{
+            "villager_count": 16,
+            "age": 1,
+            "resources": {
+                "wood": 2,
+                "food": 13,
+                "gold": 1,
+                "stone": 0
+            },
+            "notes": [
+                "Lure @animal/Deer_aoe2DE.png@",
+                "Send the next 3 @resource/MaleVillDE.jpg@ to @resource/Aoe2de_food.png@",
+				"1 @resource/MaleVillDE.jpg@ to @resource/Aoe2de_gold.png@ @mining_camp/Mining_camp_aoe2de.png@",
+				"Build a @other/House_aoe2DE.png@ with a @resource/Aoe2de_wood.png@ @resource/MaleVillDE.jpg@"
+            ]
+        },
+		{
+            "villager_count": 18,
+            "age": 1,
+            "resources": {
+                "wood": 2,
+                "food": 15,
+                "gold": 1,
+                "stone": 0
+            },
+            "notes": [
+                "Send the next 2 @resource/MaleVillDE.jpg@ to @resource/Aoe2de_food.png@",
+				"Optional(@town_center/LoomDE.png@), click up to @age/FeudalAgeIconDE.png@"
+            ]
+        },
+		{
+            "villager_count": 18,
+            "age": 1,
+            "resources": {
+                "wood": 14,
+                "food": 1,
+                "gold": 1,
+                "stone": 0
+            },
+            "notes": [
+                "Transfer @resource/MaleVillDE.jpg@ until 9 on  1 @lumber_camp/Lumber_camp_aoe2de.png@NO@lumber_camp/DoubleBitAxe_aoe2DE.png@",
+				"2 @resource/MaleVillDE.jpg@ to build @other/House_aoe2DE.png@ and @barracks/Barracks_aoe2DE.png@",
+				"5 @resource/MaleVillDE.jpg@ to stragglers"
+            ]
+        },
+		{
+            "villager_count": 18,
+            "age": 2,
+            "resources": {
+                "wood": 9,
+                "food": 6,
+                "gold": 1,
+                "stone": 0
+            },
+            "notes": [
+                "Place 2 @archery_range/Archery_range_aoe2DE.png@ with 2 @resource/MaleVillDE.jpg@, produce @archery_range/Archer_aoe2DE.png@",
+				"Research @town_center/LoomDE.png@",
+				"Stragglers back to @resource/Aoe2de_food.png@"
+            ]
+        },
+		{
+            "villager_count": 24,
+            "age": 2,
+            "resources": {
+                "wood": 9,
+                "food": 6,
+                "gold": 7,
+                "stone": 0
+            },
+            "notes": [
+                "Up to 7 @resource/MaleVillDE.jpg@ to @resource/Aoe2de_gold.png@",
+				"@resource/Aoe2de_food.png@@resource/MaleVillDE.jpg@ to @resource/BerryBushDE.png@ when @animal/Sheep_aoe2DE.png@ run out",
+				"2 builders make @other/House_aoe2DE.png@ and @defensive_structures/Palisade_wall_aoe2de.png@",
+				"@blacksmith/Blacksmith_aoe2de.png@ + @blacksmith/FletchingDE.png@"
+            ]
+        },
+		{
+            "villager_count": 32,
+            "age": 2,
+            "resources": {
+                "wood": 9,
+                "food": 14,
+                "gold": 7,
+                "stone": 0
+            },
+            "notes": [
+                "Next 8 @resource/MaleVillDE.jpg@ to @mill/FarmDE.png@",
+				"Build a @market/Market_aoe2DE.png@ and abuse it to click @age/CastleAgeIconDE_alpha.png@"
+            ]
+        }
+    ]
+}
+
+
+

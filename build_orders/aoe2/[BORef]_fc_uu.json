@@ -1,0 +1,179 @@
+{
+    "name": "[BORef] FC unique unit",
+    "author": "Aoe2arena",
+    "source": "https://aoecompanion.com/b/jplijzvj2l",
+    "build_order": [{
+            "villager_count": 6,
+            "age": 1,
+            "resources": {
+                "wood": 0,
+                "food": {
+					"Sheep": 6
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Build 2 @other/House_aoe2DE.png@.",
+                "Send the first 6 @resource/MaleVillDE.jpg@ to @animal/Sheep_aoe2DE.png@."
+            ]
+        },
+        {
+            "villager_count": 10,
+            "age": 1,
+            "resources": {
+                "wood": 4,
+                "food": {
+					"Sheep": 6
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Send the next 4 @resource/MaleVillDE.jpg@ to @resource/Aoe2de_wood.png@ on 1 @lumber_camp/Lumber_camp_aoe2de.png@"
+            ]
+        },
+        {
+            "villager_count": 11,
+            "age": 1,
+            "resources": {
+                "wood": 4,
+                "food": {
+					"Boar": 7
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Next @resource/MaleVillDE.jpg@ lures @animal/Boar_aoe2DE.png@"
+            ]
+        },
+        {
+            "villager_count": 15,
+            "age": 1,
+            "resources": {
+                "wood": 4,
+                "food": {
+					"Boar": 7,
+					"Berries": 4
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "4 next @resource/MaleVillDE.jpg@ to @resource/BerryBushDE.png@",
+				"Build 2 @other/House_aoe2DE.png@ + @mill/Mill_aoe2de.png@"
+            ]
+        },
+        {
+            "villager_count": 18,
+            "age": 1,
+            "resources": {
+                "wood": 4,
+                "food": {
+					"Boar": 8,
+					"Berries": 4,
+					"Farms": 2
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Send 3 more @resource/MaleVillDE.jpg@ on @animal/Boar_aoe2DE.png@",
+				"Transfer 2 to @mill/FarmDE.png@",
+				"Lure the second @animal/Boar_aoe2DE.png@"
+            ]
+        },
+        {
+            "villager_count": 23,
+            "age": 1,
+            "resources": {
+                "wood": 6,
+                "food": {
+					"Boar": 8,
+					"Berries": 4,
+					"Farms": 2
+				},
+                "gold": 0,
+                "stone": 3
+            },
+            "notes": [
+                "2 @resource/MaleVillDE.jpg@ to @resource/Aoe2de_wood.png@",
+                "3 @resource/MaleVillDE.jpg@ to @resource/Aoe2de_stone.png@"
+            ]
+        },
+        {
+            "villager_count": 25,
+            "age": 1,
+            "resources": {
+                "wood": 6,
+                "food": {
+					"Sheep": 6,
+					"Berries": 4,
+					"Farms": 4
+				},
+                "gold": 2,
+                "stone": 3
+            },
+            "notes": [
+                "2 @resource/MaleVillDE.jpg@ to @resource/Aoe2de_gold.png@",
+                "Send 2 @resource/Aoe2de_food.png@ @resource/MaleVillDE.jpg@ to @mill/FarmDE.png@",
+                "Click @town_center/LoomDE.png@ and @age/FeudalAgeIconDE.png@"
+            ]
+        },
+        {
+            "villager_count": 27,
+            "age": 2,
+            "resources": {
+                "wood": 6,
+                "food": {
+					"Sheep": 6,
+					"Berries": 4,
+					"Farms": 4
+				},
+                "gold": 2,
+                "stone": 5
+            },
+            "notes": [
+                "2 @resource/MaleVillDE.jpg@ to @resource/Aoe2de_stone.png@",
+                "Build @market/Market_aoe2DE.png@ @blacksmith/Blacksmith_aoe2de.png@",
+                "Click @age/CastleAgeIconDE_alpha.png@"
+            ]
+        },
+        {
+            "villager_count": 27,
+            "age": 2,
+            "resources": {
+                "wood": 6,
+                "food": {
+					"Berries": 4,
+					"Farms": 10
+				},
+                "gold": 2,
+                "stone": 5
+            },
+            "notes": [
+                "Research @mill/HorseCollarDE.png@ @lumber_camp/DoubleBitAxe_aoe2DE.png@",
+                "Send 6 @resource/Aoe2de_food.png@ @resource/MaleVillDE.jpg@ to @mill/FarmDE.png@"
+            ]
+        },
+        {
+            "villager_count": 29,
+            "age": 3,
+            "resources": {
+                "wood": 8,
+                "food": {
+					"Farms": 14
+				},
+                "gold": 2,
+                "stone": 0
+            },
+            "notes": [
+                "Build a @castle/Castle_aoe2DE.png@ with all of the @resource/Aoe2de_stone.png@ @resource/MaleVillDE.jpg@",
+                "2 @resource/MaleVillDE.jpg@ to @resource/Aoe2de_wood.png@",
+                "@resource/BerryBushDE.png@ @resource/MaleVillDE.jpg@ to @mill/FarmDE.png@",
+                "Balance eco depending on your unique unit"
+            ]
+        }
+    ]
+}

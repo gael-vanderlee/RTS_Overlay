@@ -1,0 +1,118 @@
+{
+    "name": "Korean trush",
+    "author": "Cicero",
+    "source": "https://buildorderguide.com/#/build/26",
+    "build_order": [{
+            "villager_count": 6,
+            "age": 1,
+            "resources": {
+                "wood": 0,
+                "food": {
+					"Sheep": 6
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Build 2 @other/House_aoe2DE.png@.",
+                "Send the first 6 @resource/MaleVillDE.jpg@ to @animal/Sheep_aoe2DE.png@."
+            ]
+        },
+        {
+            "villager_count": 8,
+            "age": 1,
+            "resources": {
+                "wood": 2,
+                "food": {
+					"Sheep": 6
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Send the next 2 @resource/MaleVillDE.jpg@ to @resource/Aoe2de_wood.png@ on 1 @lumber_camp/Lumber_camp_aoe2de.png@"
+            ]
+        },
+        {
+            "villager_count": 11,
+            "age": 1,
+            "resources": {
+                "wood": 2,
+                "food": {
+					"Boar": 9
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Next @resource/MaleVillDE.jpg@ lures @animal/Boar_aoe2DE.png@",
+				"+1 @resource/MaleVillDE.jpg@ on @animal/Boar_aoe2DE.png@"
+            ]
+        },
+        {
+            "villager_count": 15,
+            "age": 1,
+            "resources": {
+                "wood": 2,
+                "food": {
+					"Boar": 9,
+					"Berries": 2
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "2 next @resource/MaleVillDE.jpg@ to @resource/BerryBushDE.png@",
+				"Build 2 @other/House_aoe2DE.png@ + @mill/Mill_aoe2de.png@"
+            ]
+        },
+        {
+            "villager_count": 18,
+            "age": 1,
+            "resources": {
+                "wood": 2,
+                "food": {
+					"Boar": 14,
+					"Berries": 2
+				},
+                "gold": 0,
+                "stone": 0
+            },
+            "notes": [
+                "Send 5 more @resource/MaleVillDE.jpg@ on @animal/Boar_aoe2DE.png@",
+				"Lure the second @animal/Boar_aoe2DE.png@",
+				"Click @town_center/LoomDE.png@ and @age/FeudalAgeIconDE.png@"
+            ]
+        },
+        {
+            "villager_count": 18,
+            "age": 1,
+            "resources": {
+                "wood": 4,
+                "food": 6,
+                "gold": 0,
+                "stone": 2
+            },
+            "notes": [
+                "2 @animal/Sheep_aoe2DE.png@@resource/MaleVillDE.jpg@ to @resource/Aoe2de_stone.png@",
+                "2 @animal/Sheep_aoe2DE.png@@resource/MaleVillDE.jpg@ to @resource/Aoe2de_wood.png@",
+                "6 @animal/Sheep_aoe2DE.png@@resource/MaleVillDE.jpg@ TO BATTLE"
+            ]
+        },
+        {
+            "villager_count": 18,
+            "age": 1,
+            "resources": {
+                "wood": 4,
+                "food": 6,
+                "gold": 0,
+                "stone": 5
+            },
+            "notes": [
+                "3 @resource/MaleVillDE.jpg@ to @resource/Aoe2de_stone.png@",
+                "Seed 2 @mill/FarmDE.png@",
+				"2 @animal/Sheep_aoe2DE.png@@resource/MaleVillDE.jpg@ to @resource/BerryBushDE.png@"
+            ]
+        }
+    ]
+}
