@@ -9,7 +9,7 @@ from thefuzz import process
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QPushButton
 from PyQt6.QtWidgets import QWidget, QComboBox, QTextEdit, QCheckBox
 from PyQt6.QtGui import QKeySequence, QFont, QIcon, QCursor, QPixmap, QShortcut
-from PyQt6.QtCore import Qt, QPoint, QSize
+from PyQt6.QtCore import Qt, QPoint, QSize, QCoreApplication
 
 from common.build_order_tools import get_build_orders, check_build_order_key_values, is_build_order_new
 from common.label_display import MultiQLabelDisplay, QLabelSettings, MultiQLabelWindow
@@ -490,7 +490,7 @@ class RTSGameOverlay(QMainWindow):
             button_qsize=action_button_qsize, tooltip='next build order step')
 
         self.build_order_counter_search_button = TwinHoverButton(
-            parent=self, click_connect=self.build_order_show_searchbar,
+            parent=self, click_connect=self.build_order_show_counters_searchbar,
             icon=QIcon(os.path.join(self.directory_common_pictures, images.search)),
             button_qsize=action_button_qsize, tooltip='Search counters')
 
@@ -909,6 +909,7 @@ class RTSGameOverlay(QMainWindow):
             self.panel_add_build_order = None
 
         self.build_order_tooltip.close()
+        QCoreApplication.exit(0)
 
     def font_size_combo_box_change(self, value):
         """Detect when the font size changed
@@ -1301,14 +1302,11 @@ class RTSGameOverlay(QMainWindow):
                                                        self.selected_build_order_step_count - 1))
         return old_selected_build_order_step_id != self.selected_build_order_step_id
 
-    def build_order_show_searchbar(self):
+    def build_order_show_counters_searchbar(self):
             self.build_order_tooltip.clear()  # clear tooltip
             # self.panel_counters = CountersSearchWindow(self)
             icon_path = os.path.join(self.directory_common_pictures, self.settings.images.search)
             self.panel_counters = CountersSearchWindow(self.settings, icon_path)
-
-
-            print("WOOF")
 
     def select_build_order_id(self, build_order_id: int = -1) -> bool:
         """Select build order ID

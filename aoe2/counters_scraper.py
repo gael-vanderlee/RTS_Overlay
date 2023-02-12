@@ -11,7 +11,6 @@ class CountersScraper:
     def __init__(self):
         self.units = dict()
         self.image_folder = Path(__file__).resolve().parent.parent / "pictures" / "aoe2" / "unit_icons"
-        self.image_folder = Path(__file__).resolve().parent.parent / "pictures" / "aoe2" / "unit_icons"
         assert self.image_folder.exists() and self.image_folder.is_dir()
 
     def run(self):
