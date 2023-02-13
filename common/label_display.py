@@ -249,11 +249,11 @@ class MultiQLabelDisplay:
         text_alignment = settings.text_alignment
         if text_alignment is not None:
             if text_alignment == 'left':
-                label.setAlignment(Qt.AlignLeft)
+                label.setAlignment(Qt.AlignmentFlag.AlignLeft)
             elif text_alignment == 'center':
-                label.setAlignment(Qt.AlignCenter)
+                label.setAlignment(Qt.AlignmentFlag.AlignCenter)
             elif text_alignment == 'right':
-                label.setAlignment(Qt.AlignRight)
+                label.setAlignment(Qt.AlignmentFlag.AlignRight)
 
     def get_image_path(self, image_search: str) -> Union[str, None]:
         """Get the path for an image

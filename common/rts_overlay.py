@@ -5,6 +5,7 @@ import webbrowser
 import subprocess
 from copy import deepcopy
 from thefuzz import process
+from typing import Optional
 
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QLineEdit, QPushButton
 from PyQt6.QtWidgets import QWidget, QComboBox, QTextEdit, QCheckBox
@@ -531,7 +532,7 @@ class RTSGameOverlay(QMainWindow):
         self.panel_add_build_order = None
 
         # Counter panel
-        self.panel_counters = None
+        self.counters_panel: Optional[CountersSearchWindow] = None
 
         # initialization done
         self.init_done = True
@@ -1023,17 +1024,24 @@ class RTSGameOverlay(QMainWindow):
         if len(self.valid_build_orders) > 1:  # more than one build order for hovering color
             # get build order ID for hovering
             build_order_ids = self.build_order_selection.get_mouse_label_id(
-                self.mouse_x - self.x(), self.mouse_y - self.y())
+                self.mouse_x - self.x(),
+                self.mouse_y - self.y()
+            )
             hovering_id = build_order_ids[0] if ((len(build_order_ids) == 2) and (build_order_ids[1] == 0) and (
                     0 <= build_order_ids[0] < len(self.valid_build_orders))) else -1
 
             # loop on the build order suggestions
-            for row_id in range(len(self.valid_build_orders)):
-                if row_id != self.build_order_selection_id:
-                    self.build_order_selection.set_color_label(
-                        row_id, 0,
-                        color=self.settings.layout.configuration.hovering_build_order_color if (
-                                row_id == hovering_id) else None)
+            if hovering_id > -1:
+                for row_id in range(len(self.valid_build_orders)):
+                    if row_id != self.build_order_selection_id:
+                        self.build_order_selection.set_color_label(
+                            row_id,
+                            0,
+                            color=self.settings.layout.configuration.hovering_build_order_color if (
+                                    row_id == hovering_id) else None)
+
+        if self.counters_panel is not None:
+            self.counters_panel.mouse_hovering(self.mouse_x, self.mouse_y)
 
         # keyboard action flags
         if (self.panel_config_hotkeys is None) or (not self.panel_config_hotkeys.isVisible()):
@@ -1306,7 +1314,7 @@ class RTSGameOverlay(QMainWindow):
             self.build_order_tooltip.clear()  # clear tooltip
             # self.panel_counters = CountersSearchWindow(self)
             icon_path = os.path.join(self.directory_common_pictures, self.settings.images.search)
-            self.panel_counters = CountersSearchWindow(self.settings, icon_path)
+            self.counters_panel = CountersSearchWindow(self.settings, icon_path)
 
     def select_build_order_id(self, build_order_id: int = -1) -> bool:
         """Select build order ID
