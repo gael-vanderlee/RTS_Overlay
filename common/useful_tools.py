@@ -340,7 +340,7 @@ def popup_message(title: str, msg_text: str):
 class Checkbox:
     """Button with a twin to handle mouse hovering"""
 
-    def __init__(self, parent, layout, click_connect=None,
+    def __init__(self, parent, layout, icon_on, icon_off, button_qsize, click_connect=None,
                  tooltip: str = None):
         """Constructor
 
@@ -356,7 +356,7 @@ class Checkbox:
 
         # main button
         self.parent = parent
-        self.button = QCheckBox("Ding", self.parent)
+        self.button = QCheckBox(self.parent)
         self.button.setStyleSheet(
             f"color: rgb({layout.color_default[0]}, {layout.color_default[1]}, {layout.color_default[2]})"
         )
@@ -370,8 +370,11 @@ class Checkbox:
         self.update_click_connect(click_connect=click_connect)
 
         # update tooltip
-        self.update_tooltip(tooltip=tooltip)
+        # self.update_tooltip(tooltip=tooltip)
         self.layout = layout
+        # self.update_icon_size(icon_off, button_qsize)
+        self.button.adjustSize()
+        self.hovering_button.adjustSize()
 
     def update_icon_size(self, icon: QIcon, button_qsize: QSize):
         """Update the icon and the size of both buttons
@@ -474,10 +477,9 @@ class Checkbox:
         ----------
         is_mouse_in_roi_widget    function to check if hovering on the button
         """
-        from PyQt6.QtCore import QPoint
         if self.button.isVisible():  # only when button is visible
             if is_mouse_in_roi_widget(self.button):
-                self.hovering_button.move(self.parent.pos() + self.button.pos() + QPoint(0, 8))
+                self.hovering_button.move(self.parent.pos() + self.button.pos())
                 self.hovering_button.show()
             else:
                 self.hovering_button.hide()

@@ -4,7 +4,6 @@ from PyQt6.QtCore import Qt, QPoint, QSize
 from pathlib import Path
 import json
 from thefuzz import process
-from inflect import engine
 
 from aoe2.aoe2_settings import AoE2OverlaySettings
 from common.useful_tools import set_background_opacity, widget_y_end
@@ -141,7 +140,8 @@ class CountersSearchWindow(QMainWindow):
             counters_start_y = max(widget_y_end(self.back_button), widget_y_end(self.unit_picture))
             counters_start_y += self.settings.layout.horizontal_spacing
             self.unit_counters_display.update_size_position(init_y=counters_start_y)
-            max_y = self.unit_counters_display.y() + self.unit_counters_display.row_total_height
+            max_y = max(self.unit_counters_display.y() + self.unit_counters_display.row_total_height,
+                        self.back_button.y() + self.back_button.height())
             max_y += self.settings.panel_build_order.border_size
             max_x = max(self.unit_text.x() + self.unit_text.width(),
                         self.unit_counters_display.x() + self.unit_counters_display.row_max_width)
@@ -209,10 +209,10 @@ class CountersSearchWindow(QMainWindow):
             color = self.settings.layout.configuration.hovering_build_order_color
             col = len(self.unit_selection_display.labels[hover_pos[0]]) - 1
             self.unit_selection_display.set_color_label(hover_pos[0], col, color)
+            self.selection_id = hover_pos[0]
 
             if self.previous_hover_id > -1 \
-                    and self.previous_hover_id != hover_pos[0] \
-                    and self.previous_hover_id != self.selection_id:
+                    and self.previous_hover_id != hover_pos[0]:
                 col = len(self.unit_selection_display.labels[self.previous_hover_id]) - 1
                 self.unit_selection_display.set_color_label(self.previous_hover_id, col, None)
             self.previous_hover_id = hover_pos[0]
@@ -237,8 +237,6 @@ class CountersSearchWindow(QMainWindow):
 
     def reset_selection(self):
         for row_id in range(len(self.search_results)):
-            if row_id == self.selection_id:
-                continue
             col = len(self.unit_selection_display.labels[row_id]) - 1
             self.unit_selection_display.set_color_label(row_id, col, color=None)
         self.selection_id = 0
@@ -266,7 +264,6 @@ class CountersSearchWindow(QMainWindow):
         self.update_size()
 
     def update_counters_display(self):
-        singularizer = engine()
 
         selected_unit = self.search_results[self.selection_id]
         unit_info = self.unit_counters[selected_unit]
@@ -290,34 +287,32 @@ class CountersSearchWindow(QMainWindow):
         self.unit_text.setText(selected_unit)
         self.unit_text.move(QPoint(next_x, self.back_button.y()))
         self.unit_text.setFont(QFont(self.settings.layout.font_police, self.settings.layout.font_size))
-        color_default = self.settings.layout.color_default
+        color_default = self.settings.layout.configuration.selected_build_order_color
         color_default_str = f'color: rgb({color_default[0]}, {color_default[1]}, {color_default[2]})'
         self.unit_text.setStyleSheet(color_default_str)
         self.unit_text.adjustSize()
         self.unit_text.show()
 
-        self.unit_counters_display.add_row_from_picture_line(
-            parent=self,
-            line="\tWeak against",
-            labels_settings=[QLabelSettings(text_bold=True)]
-        )
-        for unit in unit_info["weak_vs"]:
-            # if "image_name" in self.unit_counters[unit_name].keys():
-            #     line = f"@{self.unit_counters[unit_name]['image_name']}@{unit_name}"
-            # else:
-            #     line = unit_name
+        if "weak_vs" in unit_info.keys() and unit_info["weak_vs"] is not None:
             self.unit_counters_display.add_row_from_picture_line(
                 parent=self,
-                line=unit
+                line="\tWeak against",
+                labels_settings=[QLabelSettings(text_bold=True)]
             )
+            for unit in unit_info["weak_vs"]:
+                self.unit_counters_display.add_row_from_picture_line(
+                    parent=self,
+                    line=unit
+                )
 
-        self.unit_counters_display.add_row_from_picture_line(
-            parent=self,
-            line="\tStrong against",
-            labels_settings=[QLabelSettings(text_bold=True)]
-        )
-        for unit in unit_info["strong_vs"]:
+        if "strong_vs" in unit_info.keys() and unit_info["strong_vs"] is not None:
             self.unit_counters_display.add_row_from_picture_line(
                 parent=self,
-                line=unit
-        )
+                line="\tStrong against",
+                labels_settings=[QLabelSettings(text_bold=True)]
+            )
+            for unit in unit_info["strong_vs"]:
+                self.unit_counters_display.add_row_from_picture_line(
+                    parent=self,
+                    line=unit
+            )

@@ -52,12 +52,16 @@ class CountersScraper:
 
         # Get the counters
         counters_table = soup.find("th", text="Unit strengths and weaknesses\n")
-        if not counters_table:
+        if counters_table is None:
             print(f"Couldn't find counters table for {unit}")
-            return
-        strong_vs = counters_table.parent.find_next_sibling("tr").find_all("td")[-1].text.strip().split(", ")
-        weak_vs = counters_table.parent.find_next_sibling("tr").find_next_sibling("tr").find_all("td")[-1]\
-            .text.strip().split(", ")
+            strong_vs = None
+            weak_vs = None
+        else:
+            strong_vs = counters_table.parent.find_next_sibling("tr").find_all("td")[-1].text.strip().split(", ")
+            weak_vs = counters_table.parent.find_next_sibling("tr").find_next_sibling("tr").find_all("td")[-1]\
+                .text.strip().split(", ")
+            strong_vs = [t.replace("and ", "").capitalize() for t in strong_vs]
+            weak_vs = [t.replace("and ", "").capitalize() for t in weak_vs]
 
         # Get image
         image = soup.find("figure", "pi-item pi-image").find("a").find("img").attrs
@@ -66,7 +70,7 @@ class CountersScraper:
         with open(self.image_folder / img_name, 'wb') as handler:
             handler.write(img_data)
 
-            # Update dict
+        # Update dict
         mp_dict[unit] = {
             "strong_vs": None,
             "weak_vs": None,

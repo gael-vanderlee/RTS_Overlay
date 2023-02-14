@@ -19,7 +19,7 @@ from common.useful_tools import TwinHoverButton, scale_int, scale_list_int, set_
 from common.keyboard_mouse import KeyboardMouseManagement
 from common.rts_settings import RTSHotkeys, KeyboardMouse
 
-from aoe2.personal_additions import CountersSearchWindow
+from aoe2.counters_search import CountersSearchWindow
 
 
 class HotkeysWindow(QMainWindow):
@@ -497,8 +497,12 @@ class RTSGameOverlay(QMainWindow):
 
         # self.reminder_checkbox = QCheckBox("", self)
         self.reminder_checkbox = Checkbox(
-            parent=self, click_connect=None, layout=layout)
-        # self.reminder_checkbox.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+            parent=self, click_connect=None, layout=layout,
+            icon_on=QIcon(os.path.join(self.directory_common_pictures, images.save)),
+            icon_off=QIcon(os.path.join(self.directory_common_pictures, images.quit)),
+            button_qsize=action_button_qsize
+        )
+        # self.reminder_checkbox.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
 
         # enter key selection
         hotkeys = self.settings.hotkeys

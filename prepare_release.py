@@ -25,7 +25,6 @@ def compile_clean(name_overlay: str, game_folder: str, out_lib_name: str,
     else:
         main_command = ('cmd /c "python -m nuitka'
                         ' --standalone'
-                        ' --plugin-enable=PyQt6'
                         f' --windows-icon-from-ico={icon}'
                         f' --include-data-dir=common=common'
                         )
@@ -78,7 +77,7 @@ def compile_clean(name_overlay: str, game_folder: str, out_lib_name: str,
 
 if __name__ == '__main__':
     # name of the output libraries
-    macos = True
+    macos = False
     aoe2_library_name = 'aoe2_overlay'
     aoe4_library_name = 'aoe4_overlay'
     shutil.rmtree(aoe2_library_name, ignore_errors=True)
