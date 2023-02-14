@@ -6,7 +6,8 @@ from threading import Event
 from random import choice
 
 from PyQt6.QtWidgets import QApplication
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QUrl
+from PyQt6.QtMultimedia import QSoundEffect
 from playsound import playsound
 
 from common.label_display import QLabelSettings
@@ -809,6 +810,12 @@ class AoE2GameOverlay(RTSGameOverlay):
             reminder_sounds = os.listdir(reminders_folder)
             selected_sound = choice(reminder_sounds)
             # Using playsound since PyQT's QSound stops working once compiled by Nuitka
+            # effect = QSoundEffect()
+            # effect.setSource(QUrl.fromLocalFile(os.path.join(reminders_folder, selected_sound)))
+            # effect.setLoopCount(-2)
+            # effect.play()
+            # print(f"Played {os.path.join(reminders_folder, selected_sound)}")
+
             playsound(os.path.join(reminders_folder, selected_sound), False)
 
     def enter_key_actions(self):
