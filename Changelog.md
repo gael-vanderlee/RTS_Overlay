@@ -1,3 +1,39 @@
+## [1.5.3] - 2023.08.18
+* AoE2
+    * Last match 'leaderboard_id' safety added for aoe2.net.
+* AoE4
+    * Images updated to align with aoe4guides.com.
+
+## [1.5.2] - 2023.06.02
+* AoE2
+    * Romans added (civ emblem + unique units).
+    * Dromon picture added.
+    * aoe2.net: add safety for unknown map name.
+* AoE4
+    * Added pictures from aoe4-guides for Season 5.
+
+## [1.5.1] - 2023.04.30
+* Time only indicated if not set to empty.
+* AoE2
+    * Remove indian civ icon from selection.
+    * Civ selection using 3 letters.
+    * Remove Lithuanians 3 min drush BO (obsolete with new patch).
+    * Gambesons picture added.
+    * Add website link (and instructions) to buildorderguide.com.
+* AoE4
+    * Add website link (and instructions) to aoe4guides.com.
+    * Add missing AoE4 pictures.
+
+## [1.5.0] - 2023.03.22
+* SC2
+    * StarCraft 2 RTS Overlay first release.
+* AoE2
+    * Add new indian civs for match data icons.
+    * Civilization filter available.
+        * Note: BOs can be updated by adding `"civilization": "Any"` (or a specific civilization), but still works with old BO format.
+* Adding `local_config` at the root of a folder allows to use it as a local configuration folder.
+* Improving the build orders validity check.
+
 ## [1.4.3] - 2022.12.20
 * AoE2
     * aoe2.net is back. The API was updated accordingly.

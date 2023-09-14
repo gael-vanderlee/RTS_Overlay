@@ -79,7 +79,14 @@ def get_aoe2_net_parameters(timeout: int) -> dict:
     -------
     dictionary with the content, None if issue occurred
     """
-    return read_json_url('https://aoe2.net/api/strings?game=aoe2de&language=en', timeout)
+    aoe2_net_parameters = read_json_url('https://aoe2.net/api/strings?game=aoe2de&language=en', timeout)
+
+    # add missing civilizations
+    aoe2_net_parameters['civ'].append({'id': 40, 'string': 'Dravidians'})
+    aoe2_net_parameters['civ'].append({'id': 41, 'string': 'Bengalis'})
+    aoe2_net_parameters['civ'].append({'id': 42, 'string': 'Gurjaras'})
+
+    return aoe2_net_parameters
 
 
 def get_aoe2_net_parameters_list(output: list, timeout: int):
@@ -300,10 +307,12 @@ def get_aoe2_net_match_data(stop_event: Event, search_input: str, timeout: int, 
             return data
 
         # find selected map
-        for map_type in aoe2_net_parameters['map_type']:
-            if map_type['id'] == last_match['map_type']:
-                data.map_name = map_type['string']
-                break
+        data.map_name = 'Unknown'
+        if 'map_type' in last_match:
+            for map_type in aoe2_net_parameters['map_type']:
+                if map_type['id'] == last_match['map_type']:
+                    data.map_name = map_type['string']
+                    break
 
         civ_list = aoe2_net_parameters['civ']  # list of civilizations
 
@@ -335,7 +344,8 @@ def get_aoe2_net_match_data(stop_event: Event, search_input: str, timeout: int, 
         for item in aoe2_net_parameters['leaderboard']:
             leaderboard_ids[item['string']] = item['id']
 
-        match_leaderboard_id = last_match['leaderboard_id']  # type of leaderboard to request depending on the match
+        # type of leaderboard to request depending on the match
+        match_leaderboard_id = last_match['leaderboard_id'] if 'leaderboard_id' in last_match else None
 
         # safety (e.g. Quick Match) -> select 'Unranked'
         if match_leaderboard_id is None:

@@ -59,7 +59,7 @@ class RTSLayout(SettingsSubclass):
     def __init__(self):
         """Constructor"""
         self.opacity: float = 0.75  # opacity of the window
-        self.upper_right_position: list = [1871, 67]  # initial position of the upper right corner
+        self.upper_right_position: list = [1870, 65]  # initial position of the upper right corner
         self.border_size: int = 15  # size of the borders
         self.vertical_spacing: int = 10  # vertical spacing
         self.horizontal_spacing: int = 6  # horizontal spacing
@@ -70,7 +70,6 @@ class RTSLayout(SettingsSubclass):
         self.color_background: list = [30, 30, 30]  # background RGB color
         self.action_button_size: int = 22  # size of the action buttons
         self.action_button_spacing: int = 8  # horizontal spacing between the action buttons
-        self.build_order: RTSBuildOrderLayout = RTSBuildOrderLayout()  # build order layout
         self.build_order_tooltip: RTSBuildOrderTooltipLayout = RTSBuildOrderTooltipLayout()  # build order tooltip
 
 
@@ -111,13 +110,6 @@ class RTSHotkeysConfigurationLayout(SettingsSubclass):
         self.horizontal_spacing: int = 10  # horizontal spacing between the elements
         self.mouse_height: int = 25  # height for the mouse image
         self.mouse_spacing: int = 30  # horizontal spacing between the field and the mouse icon
-        # text for the manual describing how to setup the hotkeys
-        self.manual_text: str = \
-            'Set hotkey sequence or \'Esc\' to cancel. Click on \'Update hotkeys\' to confirm your choice.' \
-            '\n\nClick on the mouse checkbox to consider \'L\' as left click, \'R\' as right click, ' \
-            '\'M\' as middle button,\n\'1\' as first extra button and \'2\' as second extra button.' \
-            '\nSo, the input \'Ctrl+1\' with mouse option means Ctrl + first extra button.' \
-            '\n\nNote that hotkeys are ignored while this window is open.'
 
 
 class RTSBuildOrderInputLayout(SettingsSubclass):
@@ -133,11 +125,9 @@ class RTSBuildOrderInputLayout(SettingsSubclass):
         self.border_size: int = 10  # size of the borders
         self.edit_width: int = 800  # width for the build order text input
         self.edit_height: int = 600  # height for the build order text input
-        self.edit_init_text: str = ''  # initial text for the build order text input
         self.button_margin: int = 5  # margin from text to button border
         self.vertical_spacing: int = 10  # vertical spacing between the elements
         self.horizontal_spacing: int = 10  # horizontal spacing between the elements
-        self.build_order_website: list = []  # list of 2 website elements [button name, website link]
 
 
 class KeyboardMouse(SettingsSubclass):
@@ -169,10 +159,8 @@ class RTSOverlaySettings(SettingsSubclass):
 
     def __init__(self):
         """Constructor"""
+        self.mouse_call_ms = 20  # interval between 2 calls related to mouse motion [ms]
+
         self.hotkeys = RTSHotkeys()  # hotkeys
 
         self.panel_hotkeys = RTSHotkeysConfigurationLayout()  # panel to configure the hotkeys
-
-        self.panel_build_order = RTSBuildOrderInputLayout()  # panel to input a build order
-
-        self.mouse_call_ms = 20  # interval between 2 calls related to mouse motion [ms]

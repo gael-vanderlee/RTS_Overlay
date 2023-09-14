@@ -1,6 +1,16 @@
 import json
 from common.settings_subclass import SettingsSubclass
-from common.rts_settings import RTSConfigurationUsernameLayout, RTSLayout, RTSImages, RTSOverlaySettings
+from common.rts_settings import RTSConfigurationUsernameLayout, RTSLayout, RTSImages, RTSOverlaySettings, \
+    RTSBuildOrderLayout, RTSBuildOrderInputLayout
+
+
+class AoE2ConfigurationLayout(RTSConfigurationUsernameLayout):
+    """Settings for the AoE2 configuration layout"""
+
+    def __init__(self):
+        """Constructor"""
+        super().__init__()
+        self.civilization_icon_select_size: list = [24, 24]  # size of the civilization icon for civilization selection
 
 
 class AoE2MatchDataLayout(SettingsSubclass):
@@ -40,7 +50,8 @@ class AoE2Layout(RTSLayout):
     def __init__(self):
         """Constructor"""
         super().__init__()
-        self.configuration: RTSConfigurationUsernameLayout = RTSConfigurationUsernameLayout()  # configuration layout
+        self.configuration: AoE2ConfigurationLayout = AoE2ConfigurationLayout()  # configuration layout
+        self.build_order: RTSBuildOrderLayout = RTSBuildOrderLayout()  # build order layout
         self.match_data: AoE2MatchDataLayout = AoE2MatchDataLayout()  # match data layout
 
 
@@ -70,6 +81,8 @@ class AoE2OverlaySettings(RTSOverlaySettings):
         """Constructor"""
         super().__init__()
 
+        self.panel_build_order = RTSBuildOrderInputLayout()  # panel to input a build order
+
         self.match_data_call_ms = 10000  # interval between 2 calls related to match data [ms]
 
         self.url_timeout = 10  # timeout for URL requests [s]
@@ -86,15 +99,6 @@ class AoE2OverlaySettings(RTSOverlaySettings):
 
         # images
         self.images = AoE2Images()
-
-        # panel to input a build order
-        self.panel_build_order.edit_init_text = \
-            'Replace this text by any build order in correct JSON format, then click on \'Add build order\'.' \
-            '\n\nWrite your build order as JSON format, following the guidelines in Readme.md ' \
-            'or adapt one of the existing ones.' \
-            '\n\nYou can find all your saved build orders as JSON files by clicking on \'Open build orders folder\'.' \
-            '\nTo remove any build order, just delete the corresponding file and use \'reload settings\' ' \
-            '(or relaunch the overlay).'
 
 
 if __name__ == '__main__':

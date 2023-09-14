@@ -1,280 +1,21 @@
 import os
 import json
 import appdirs
-import webbrowser
-import subprocess
 from copy import deepcopy
 from thefuzz import process
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QShortcut, QLineEdit, QPushButton
-from PyQt5.QtWidgets import QWidget, QComboBox, QDesktopWidget, QTextEdit, QCheckBox
-from PyQt5.QtGui import QKeySequence, QFont, QIcon, QCursor, QPixmap
+from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QShortcut, QLineEdit
+from PyQt5.QtWidgets import QWidget, QComboBox, QDesktopWidget
+from PyQt5.QtGui import QKeySequence, QFont, QIcon, QCursor
 from PyQt5.QtCore import Qt, QPoint, QSize
 
 from common.build_order_tools import get_build_orders, check_build_order_key_values, is_build_order_new
 from common.label_display import MultiQLabelDisplay, QLabelSettings, MultiQLabelWindow
-from common.useful_tools import TwinHoverButton, scale_int, scale_list_int, set_background_opacity, \
-    OverlaySequenceEdit, widget_x_end, widget_y_end, popup_message
+from common.useful_tools import TwinHoverButton, scale_int, scale_list_int, set_background_opacity, widget_x_end, \
+    popup_message
 from common.keyboard_mouse import KeyboardMouseManagement
-from common.rts_settings import RTSHotkeys, KeyboardMouse
-
-
-class HotkeysWindow(QMainWindow):
-    """Window to configure the hotkeys"""
-
-    def __init__(self, parent, hotkeys: RTSHotkeys, game_icon: str, mouse_image: str, mouse_height: int,
-                 settings_folder: str, font_police: str, font_size: int, color_font: list, color_background: list,
-                 opacity: float, border_size: int, edit_width: int, edit_height: int, button_margin: int,
-                 vertical_spacing: int, section_vertical_spacing: int, horizontal_spacing: int, mouse_spacing: int,
-                 manual_text: str):
-        """Constructor
-
-        Parameters
-        ----------
-        parent                      parent window
-        hotkeys                     hotkeys current definition
-        game_icon                   icon of the game
-        mouse_image                 image for the mouse
-        mouse_height                height for the mouse image
-        settings_folder             folder with the settings file
-        font_police                 font police type
-        font_size                   font size
-        color_font                  color of the font
-        color_background            color of the background
-        opacity                     opacity of the window
-        border_size                 size of the borders
-        edit_width                  width for the hotkeys edit fields
-        edit_height                 height for the hotkeys edit fields
-        button_margin               margin from text to button border
-        vertical_spacing            vertical spacing between the elements
-        section_vertical_spacing    vertical spacing between the sections
-        horizontal_spacing          horizontal spacing between the elements
-        mouse_spacing               horizontal spacing between the field and the mouse icon
-        manual_text                 text for the manual describing how to setup the hotkeys
-        """
-        super().__init__()
-        self.parent = parent
-
-        # description for the different hotkeys
-        self.descriptions = {
-            'next_panel': 'Move to next panel :',
-            'show_hide': 'Show/hide overlay :',
-            'build_order_previous_step': 'Go to previous BO step :',
-            'build_order_next_step': 'Go to next BO step :'
-        }
-        for description in self.descriptions:
-            assert description in parent.hotkey_names
-
-        # style to apply on the different parts
-        style_description = f'color: rgb({color_font[0]}, {color_font[1]}, {color_font[2]})'
-        style_sequence_edit = 'QWidget{' + style_description + '; border: 1px solid white}'
-        style_button = 'QWidget{' + style_description + '; border: 1px solid white; padding: ' + str(
-            button_margin) + 'px}'
-
-        # manual
-        manual_label = QLabel(manual_text, self)
-        manual_label.setFont(QFont(font_police, font_size))
-        manual_label.setStyleSheet(style_description)
-        manual_label.adjustSize()
-        manual_label.move(border_size, border_size)
-        y_hotkeys = widget_y_end(manual_label) + section_vertical_spacing  # vertical position for hotkeys
-        max_width = widget_x_end(manual_label)
-
-        # labels display (descriptions)
-        count = 0
-        y_buttons = y_hotkeys  # vertical position for the buttons
-        line_height = edit_height + vertical_spacing
-        first_column_max_width = 0
-        for description in self.descriptions.values():
-            label = QLabel(description, self)
-            label.setFont(QFont(font_police, font_size))
-            label.setStyleSheet(style_description)
-            label.adjustSize()
-            label.move(border_size, y_hotkeys + count * line_height)
-            first_column_max_width = max(first_column_max_width, widget_x_end(label))
-            y_buttons = widget_y_end(label) + section_vertical_spacing
-            count += 1
-
-        # button to open settings folder
-        self.folder_button = QPushButton('Open settings folder', self)
-        self.folder_button.setFont(QFont(font_police, font_size))
-        self.folder_button.setStyleSheet(style_button)
-        self.folder_button.adjustSize()
-        self.folder_button.move(border_size, y_buttons)
-        self.folder_button.clicked.connect(lambda: subprocess.run(['explorer', settings_folder]))
-        self.folder_button.show()
-        first_column_max_width = max(first_column_max_width, widget_x_end(self.folder_button))
-
-        # mouse dictionaries
-        self.mouse_to_field = {'left': 'L', 'middle': 'M', 'right': 'R', 'x': '1', 'x2': '2'}
-        self.field_to_mouse = {v: k for k, v in self.mouse_to_field.items()}
-
-        # hotkeys edit fields
-        count = 0
-        x_hotkey = first_column_max_width + horizontal_spacing  # horizontal position for the hotkey fields
-        self.hotkeys = {}  # storing the hotkeys
-        self.mouse_checkboxes = {}  # storing the mouse checkboxes
-        for key in self.descriptions.keys():
-            hotkey = OverlaySequenceEdit(self)
-
-            valid_mouse_input = False  # check if valid mouse input provided
-            if hasattr(hotkeys, key):
-                value = getattr(hotkeys, key)
-                if isinstance(value, KeyboardMouse):
-                    valid_mouse_input = value.mouse in self.mouse_to_field
-                    if (value.keyboard != '') and valid_mouse_input:
-                        hotkey.setKeySequence(value.keyboard + '+' + self.mouse_to_field[value.mouse])
-                    elif value.keyboard != '':
-                        hotkey.setKeySequence(value.keyboard)
-                    elif valid_mouse_input:
-                        hotkey.setKeySequence(self.mouse_to_field[value.mouse])
-
-            hotkey.setFont(QFont(font_police, font_size))
-            hotkey.setStyleSheet(style_sequence_edit)
-            hotkey.resize(edit_width, edit_height)
-            hotkey.move(x_hotkey, y_hotkeys + count * line_height)
-            hotkey.setToolTip('Click to edit, then input hotkey combination.')
-            hotkey.show()
-            self.hotkeys[key] = hotkey
-
-            # icon for the mouse
-            mouse_icon = QLabel('', self)
-            mouse_icon.setPixmap(QPixmap(mouse_image).scaledToHeight(mouse_height, mode=Qt.SmoothTransformation))
-            mouse_icon.adjustSize()
-            mouse_icon.move(widget_x_end(hotkey) + mouse_spacing, hotkey.y())
-            mouse_icon.show()
-
-            # checkbox for the mouse
-            mouse_checkbox = QCheckBox('', self)
-            mouse_checkbox.setChecked(valid_mouse_input)
-            mouse_checkbox.adjustSize()
-            mouse_checkbox.move(widget_x_end(mouse_icon) + horizontal_spacing, hotkey.y())
-            mouse_checkbox.show()
-            max_width = max(max_width, widget_x_end(mouse_checkbox))
-            self.mouse_checkboxes[key] = mouse_checkbox
-
-            count += 1
-
-        # send update button
-        self.update_button = QPushButton("Update hotkeys", self)
-        self.update_button.setFont(QFont(font_police, font_size))
-        self.update_button.setStyleSheet(style_button)
-        self.update_button.adjustSize()
-        self.update_button.move(x_hotkey, self.folder_button.y())
-        self.update_button.clicked.connect(parent.update_hotkeys)
-        self.update_button.show()
-        max_width = max(max_width, widget_x_end(self.update_button))
-
-        # window properties and show
-        self.setWindowTitle('Configure hotkeys')
-        self.setWindowIcon(QIcon(game_icon))
-        self.resize(max_width + border_size, widget_y_end(self.update_button) + border_size)
-        set_background_opacity(self, color_background, opacity)
-        self.show()
-
-    def closeEvent(self, _):
-        """Called when clicking on the cross icon (closing window icon)"""
-        self.parent.keyboard_mouse.set_all_flags(False)
-        super().close()
-
-
-class BuildOrderWindow(QMainWindow):
-    """Window to add a new build order"""
-
-    def __init__(self, parent, game_icon: str, build_order_folder: str, font_police: str, font_size: int,
-                 color_font: list, color_background: list, opacity: float, border_size: int,
-                 edit_width: int, edit_height: int, edit_init_text: str, button_margin: int,
-                 vertical_spacing: int, horizontal_spacing: int, build_order_website: list):
-        """Constructor
-
-        Parameters
-        ----------
-        parent                 parent window
-        game_icon              icon of the game
-        build_order_folder     folder where the build orders are saved
-        font_police            font police type
-        font_size              font size
-        color_font             color of the font
-        color_background       color of the background
-        opacity                opacity of the window
-        border_size            size of the borders
-        edit_width             width for the build order text input
-        edit_height            height for the build order text input
-        edit_init_text         initial text for the build order text input
-        button_margin          margin from text to button border
-        vertical_spacing       vertical spacing between the elements
-        horizontal_spacing     horizontal spacing between the elements
-        build_order_website    list of 2 website elements [button name, website link], empty otherwise
-        """
-        super().__init__()
-
-        # style to apply on the different parts
-        style_description = f'color: rgb({color_font[0]}, {color_font[1]}, {color_font[2]})'
-        style_text_edit = 'QWidget{' + style_description + '; border: 1px solid white}'
-        style_button = 'QWidget{' + style_description + '; border: 1px solid white; padding: ' + str(
-            button_margin) + 'px}'
-
-        # text input for the build order
-        self.text_input = QTextEdit(self)
-        self.text_input.setPlainText(edit_init_text)
-        self.text_input.setFont(QFont(font_police, font_size))
-        self.text_input.setStyleSheet(style_text_edit)
-        self.text_input.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.text_input.resize(edit_width, edit_height)
-        self.text_input.move(border_size, border_size)
-        self.text_input.show()
-        max_width = border_size + self.text_input.width()
-
-        # button to add build order
-        self.update_button = QPushButton('Add build order', self)
-        self.update_button.setFont(QFont(font_police, font_size))
-        self.update_button.setStyleSheet(style_button)
-        self.update_button.adjustSize()
-        self.update_button.move(border_size, border_size + self.text_input.height() + vertical_spacing)
-        self.update_button.clicked.connect(parent.add_build_order)
-        self.update_button.show()
-
-        # button to open build order folder
-        self.folder_button = QPushButton('Open build orders folder', self)
-        self.folder_button.setFont(QFont(font_police, font_size))
-        self.folder_button.setStyleSheet(style_button)
-        self.folder_button.adjustSize()
-        self.folder_button.move(
-            widget_x_end(self.update_button) + horizontal_spacing, self.update_button.y())
-        self.folder_button.clicked.connect(lambda: subprocess.run(['explorer', build_order_folder]))
-        self.folder_button.show()
-        max_width = max(max_width, widget_x_end(self.folder_button))
-
-        # open build order website
-        self.website_link = None
-        if len(build_order_website) == 2:
-            assert isinstance(build_order_website[0], str) and isinstance(build_order_website[1], str)
-            self.website_link = build_order_website[1]
-            self.website_button = QPushButton(build_order_website[0], self)
-            self.website_button.setFont(QFont(font_police, font_size))
-            self.website_button.setStyleSheet(style_button)
-            self.website_button.adjustSize()
-            self.website_button.move(
-                widget_x_end(self.folder_button) + horizontal_spacing, self.folder_button.y())
-            self.website_button.clicked.connect(self.open_website)
-            self.website_button.show()
-            max_width = max(max_width, widget_x_end(self.website_button))
-
-        # window properties and show
-        self.setWindowTitle('New build order')
-        self.setWindowIcon(QIcon(game_icon))
-        self.resize(max_width + border_size, widget_y_end(self.update_button) + border_size)
-        set_background_opacity(self, color_background, opacity)
-        self.show()
-
-    def open_website(self):
-        """Open the build order website"""
-        if self.website_link is not None:
-            webbrowser.open(self.website_link)
-
-    def closeEvent(self, _):
-        """Called when clicking on the cross icon (closing window icon)"""
-        super().close()
+from common.rts_settings import KeyboardMouse
+from common.hotkeys_window import HotkeysWindow
 
 
 class RTSGameOverlay(QMainWindow):
@@ -304,7 +45,11 @@ class RTSGameOverlay(QMainWindow):
         self.directory_main = directory_main  # main file
         self.directory_game_pictures = os.path.join(self.directory_main, 'pictures', name_game)  # game pictures
         self.directory_common_pictures = os.path.join(self.directory_main, 'pictures', 'common')  # common pictures
-        self.directory_config_rts_overlay = os.path.join(appdirs.user_data_dir(), "RTS_Overlay")  # common configuration
+        # common configuration
+        if os.path.isdir(os.path.join(self.directory_main, 'local_config')):  # check for local configuration folder
+            self.directory_config_rts_overlay = os.path.join(self.directory_main, 'local_config')
+        else:
+            self.directory_config_rts_overlay = os.path.join(appdirs.user_data_dir(), 'RTS_Overlay')
         self.directory_config_game = os.path.join(self.directory_config_rts_overlay, name_game)  # game configuration
         self.directory_settings = os.path.join(self.directory_config_game, 'settings')  # settings file
         self.directory_build_orders = os.path.join(self.directory_config_game, 'build_orders')  # build orders
@@ -388,9 +133,6 @@ class RTSGameOverlay(QMainWindow):
         self.build_orders = get_build_orders(self.directory_build_orders, check_valid_build_order,
                                              category_name=self.build_order_category_name)
 
-        # selected username
-        self.selected_username = self.settings.username if (len(self.settings.username) > 0) else None
-
         # move window
         self.setMouseTracking(True)  # mouse tracking
         self.left_click_start = False  # left click pressing started
@@ -408,13 +150,6 @@ class RTSGameOverlay(QMainWindow):
             vertical_spacing=layout.configuration.build_order_selection_vertical_spacing,
             color_default=layout.color_default)
 
-        # username selection
-        self.username_title = QLabel('Username', self)
-        self.username_search = QLineEdit(self)
-        self.username_selection = MultiQLabelDisplay(
-            font_police=layout.font_police, font_size=layout.font_size, border_size=layout.border_size,
-            vertical_spacing=layout.vertical_spacing, color_default=layout.color_default)
-
         # configuration elements initialization
         self.build_order_step = QLabel('Step: 0/0', self)
         self.configuration_initialization()
@@ -428,14 +163,8 @@ class RTSGameOverlay(QMainWindow):
         self.build_order_notes = MultiQLabelDisplay(
             font_police=layout.font_police, font_size=layout.font_size, image_height=layout.build_order.image_height,
             border_size=layout.border_size, vertical_spacing=layout.vertical_spacing,
-            color_default=layout.color_default, game_pictures_folder=self.directory_game_pictures)
-
-        # display match data information
-        self.match_data_display = MultiQLabelDisplay(
-            font_police=layout.font_police, font_size=layout.font_size,
-            image_height=layout.match_data.image_height, border_size=layout.border_size,
-            vertical_spacing=layout.vertical_spacing, color_default=layout.color_default,
-            game_pictures_folder=self.directory_game_pictures, common_pictures_folder=self.directory_common_pictures)
+            color_default=layout.color_default, game_pictures_folder=self.directory_game_pictures,
+            common_pictures_folder=self.directory_common_pictures)
 
         # window color and position
         self.upper_right_position = [0, 0]
@@ -569,9 +298,6 @@ class RTSGameOverlay(QMainWindow):
         self.build_orders = get_build_orders(self.directory_build_orders, self.check_valid_build_order,
                                              category_name=self.build_order_category_name)
 
-        # selected username
-        self.selected_username = self.settings.username if (len(self.settings.username) > 0) else None
-
         # move window
         self.left_click_start = False  # left click pressing started
         self.old_pos = self.pos()  # old position of the window
@@ -584,11 +310,6 @@ class RTSGameOverlay(QMainWindow):
             font_police=layout.font_police, font_size=layout.font_size, border_size=layout.border_size,
             vertical_spacing=layout.configuration.build_order_selection_vertical_spacing,
             color_default=layout.color_default)
-
-        # username selection
-        self.username_selection.update_settings(
-            font_police=layout.font_police, font_size=layout.font_size, border_size=layout.border_size,
-            vertical_spacing=layout.vertical_spacing, color_default=layout.color_default)
 
         # configuration elements initialization
         self.configuration_initialization()
@@ -605,12 +326,6 @@ class RTSGameOverlay(QMainWindow):
             image_height=layout.build_order.image_height,
             border_size=layout.border_size, vertical_spacing=layout.vertical_spacing,
             color_default=layout.color_default)
-
-        # display match data information
-        self.match_data_display.update_settings(
-            font_police=layout.font_police, font_size=layout.font_size,
-            image_height=layout.match_data.image_height, border_size=layout.border_size,
-            vertical_spacing=layout.vertical_spacing, color_default=layout.color_default)
 
         # window color and position
         self.window_color_position_initialization()
@@ -777,21 +492,6 @@ class RTSGameOverlay(QMainWindow):
         self.build_order_selection.clear()
         self.build_order_selection.add_row_from_picture_line(parent=self, line='no build order')
 
-        # title for the username search bar
-        self.username_title.setStyleSheet(color_default_str)
-        self.username_title.setFont(QFont(layout.font_police, layout.font_size))
-        self.username_title.adjustSize()
-
-        # username search bar
-        self.username_search.resize(layout.configuration.username_search_size[0],
-                                    layout.configuration.username_search_size[1])
-        self.username_search.setStyleSheet(qwidget_color_default_str)
-        self.username_search.setFont(QFont(layout.font_police, layout.font_size))
-        self.username_search.setToolTip('username, profile ID or steam ID')
-
-        # indicating the selected username
-        self.select_username(self.settings.username)
-
         # selected step of the build order
         self.build_order_step.setStyleSheet(color_default_str)
         self.build_order_step.setFont(QFont(layout.font_police, layout.font_size))
@@ -824,10 +524,8 @@ class RTSGameOverlay(QMainWindow):
 
         configuration = layout.configuration
         unscaled_configuration = unscaled_layout.configuration
-        configuration.search_spacing = scale_int(scaling, unscaled_configuration.search_spacing)
         configuration.build_order_search_size = scale_list_int(
             scaling, unscaled_configuration.build_order_search_size)
-        configuration.username_search_size = scale_list_int(scaling, unscaled_configuration.username_search_size)
         configuration.build_order_selection_vertical_spacing = scale_int(
             scaling, unscaled_configuration.build_order_selection_vertical_spacing)
 
@@ -836,13 +534,6 @@ class RTSGameOverlay(QMainWindow):
         build_order.image_height = scale_int(scaling, unscaled_build_order.image_height)
         build_order.resource_spacing = scale_int(scaling, unscaled_build_order.resource_spacing)
         build_order.bo_next_tab_spacing = scale_int(scaling, unscaled_build_order.bo_next_tab_spacing)
-
-        match_data = layout.match_data
-        unscaled_match_data = unscaled_layout.match_data
-        match_data.image_height = scale_int(scaling, unscaled_match_data.image_height)
-        match_data.flag_width = scale_int(scaling, unscaled_match_data.flag_width)
-        match_data.flag_height = scale_int(scaling, unscaled_match_data.flag_height)
-        match_data.resource_spacing = scale_int(scaling, unscaled_match_data.resource_spacing)
 
         panel_hotkeys = self.settings.panel_hotkeys
         unscaled_panel_hotkeys = self.unscaled_settings.panel_hotkeys
@@ -941,23 +632,11 @@ class RTSGameOverlay(QMainWindow):
                 color_background=config.color_background, opacity=config.opacity, border_size=config.border_size,
                 edit_width=config.edit_width, edit_height=config.edit_height, button_margin=config.button_margin,
                 vertical_spacing=config.vertical_spacing, section_vertical_spacing=config.section_vertical_spacing,
-                horizontal_spacing=config.horizontal_spacing, mouse_spacing=config.mouse_spacing,
-                manual_text=config.manual_text)
+                horizontal_spacing=config.horizontal_spacing, mouse_spacing=config.mouse_spacing)
 
     def panel_add_build_order(self):
         """Open/close the panel to add a build order"""
-        if (self.panel_add_build_order is not None) and self.panel_add_build_order.isVisible():  # close panel
-            self.panel_add_build_order.close()
-            self.panel_add_build_order = None
-        else:  # open new panel
-            config = self.settings.panel_build_order
-            self.panel_add_build_order = BuildOrderWindow(
-                parent=self, game_icon=self.game_icon, build_order_folder=self.directory_build_orders,
-                font_police=config.font_police, font_size=config.font_size, color_font=config.color_font,
-                color_background=config.color_background, opacity=config.opacity, border_size=config.border_size,
-                edit_width=config.edit_width, edit_height=config.edit_height, edit_init_text=config.edit_init_text,
-                button_margin=config.button_margin, vertical_spacing=config.vertical_spacing,
-                horizontal_spacing=config.horizontal_spacing, build_order_website=config.build_order_website)
+        pass  # will be re-implemented in daughter classes
 
     def get_hotkey_mouse_flag(self, name: str) -> bool:
         """Get the flag value for a global hotkey and/or mouse input
@@ -1096,46 +775,61 @@ class RTSGameOverlay(QMainWindow):
         self.set_keyboard_mouse()
         self.save_settings()
 
+    def add_build_order_json_data(self, build_order_data: dict) -> str:
+        """Add a build order, from its JSON format
+
+        Parameters
+        ----------
+        build_order_data    build order data in JSON format
+
+        Returns
+        -------
+        Text message about the loading action.
+        """
+        # check if build order content is valid
+        valid_bo, bo_error_msg = self.check_valid_build_order(build_order_data, bo_name_msg=True)
+        if valid_bo:
+            name = build_order_data['name']  # name of the build order
+
+            # check if build order is a new one
+            if is_build_order_new(self.build_orders, build_order_data, self.build_order_category_name):
+
+                # output filename
+                output_name = f'{name}.json'
+                if (self.build_order_category_name is not None) and (
+                        self.build_order_category_name in build_order_data):
+                    output_name = os.path.join(build_order_data[self.build_order_category_name], output_name)
+                output_name = output_name.replace(' ', '_')  # replace spaces in the name
+                out_filename = os.path.join(self.directory_build_orders, output_name)
+
+                # check file does not exist
+                if not os.path.isfile(out_filename):
+                    # create output directory if not existent
+                    os.makedirs(os.path.dirname(out_filename), exist_ok=True)
+                    # write JSON file
+                    with open(out_filename, 'w') as f:
+                        f.write(json.dumps(build_order_data, sort_keys=False, indent=4))
+                    # add build order to list
+                    self.build_orders.append(build_order_data)
+                    # clear input
+                    self.panel_add_build_order.text_input.clear()
+                    msg_text = f'Build order \'{name}\' added and saved as \'{out_filename}\'.'
+                else:
+                    msg_text = f'Output file \'{out_filename}\' already exists (build order not added).'
+            else:
+                msg_text = f'Build order already exists with the name \'{name}\' (not added).'
+        else:
+            msg_text = f'Build order content is not valid: {bo_error_msg}'
+
+        return msg_text
+
     def add_build_order(self):
         """Try to add the build order written in the new build order panel"""
         msg_text = None
         try:
             # get data as dictionary
             build_order_data = json.loads(self.panel_add_build_order.text_input.toPlainText())
-
-            # check if build order content is valid
-            if self.check_valid_build_order(build_order_data):
-                name = build_order_data['name']  # name of the build order
-
-                # check if build order is a new one
-                if is_build_order_new(self.build_orders, build_order_data, self.build_order_category_name):
-
-                    # output filename
-                    output_name = f'{name}.json'
-                    if (self.build_order_category_name is not None) and (
-                            self.build_order_category_name in build_order_data):
-                        output_name = os.path.join(build_order_data[self.build_order_category_name], output_name)
-                    output_name = output_name.replace(' ', '_')  # replace spaces in the name
-                    out_filename = os.path.join(self.directory_build_orders, output_name)
-
-                    # check file does not exist
-                    if not os.path.isfile(out_filename):
-                        # create output directory if not existent
-                        os.makedirs(os.path.dirname(out_filename), exist_ok=True)
-                        # write JSON file
-                        with open(out_filename, 'w') as f:
-                            f.write(json.dumps(build_order_data, sort_keys=False, indent=4))
-                        # add build order to list
-                        self.build_orders.append(build_order_data)
-                        # clear input
-                        self.panel_add_build_order.text_input.clear()
-                        msg_text = f'Build order \'{name}\' added and saved as \'{out_filename}\'.'
-                    else:
-                        msg_text = f'Output file \'{out_filename}\' already exists (build order not added).'
-                else:
-                    msg_text = f'Build order already exists with the name \'{name}\' (not added).'
-            else:
-                msg_text = 'Build order content is not valid.'
+            msg_text = self.add_build_order_json_data(build_order_data)
 
         except json.JSONDecodeError:
             if msg_text is None:
@@ -1426,6 +1120,103 @@ class RTSGameOverlay(QMainWindow):
             self.build_order_selection.add_row_from_picture_line(parent=self, line='no build order')
         self.build_order_search.clearFocus()
 
+    def hide_elements(self):
+        """Hide elements"""
+
+        # configuration buttons
+        self.next_panel_button.hide()
+
+        self.config_quit_button.hide()
+        self.config_save_button.hide()
+        self.config_reload_button.hide()
+        self.config_hotkey_button.hide()
+        self.config_build_order_button.hide()
+
+        self.build_order_step.hide()
+        self.build_order_previous_button.hide()
+        self.build_order_next_button.hide()
+
+        # police, scaling combo
+        self.font_size_input.hide()
+        self.scaling_input.hide()
+
+        # search build order
+        self.build_order_title.hide()
+        self.build_order_search.hide()
+        self.build_order_selection.hide()
+
+        # display build order
+        self.build_order_resources.hide()
+        self.build_order_notes.hide()
+
+
+class RTSGameMatchDataOverlay(RTSGameOverlay):
+    """RTS game overlay application, including match data"""
+
+    def __init__(self, directory_main: str, name_game: str, settings_name: str, settings_class,
+                 check_valid_build_order, build_order_category_name: str = None):
+        """Constructor
+
+        Parameters
+        ----------
+        directory_main               directory where the main file is located
+        name_game                    name of the game (for pictures folder)
+        settings_name                name of the settings (to load/save)
+        settings_class               settings class
+        check_valid_build_order      function to check if a build order is valid
+        build_order_category_name    if not None, accept build orders with same name,
+                                     provided they are in different categories
+        """
+        super().__init__(directory_main, name_game, settings_name, settings_class, check_valid_build_order,
+                         build_order_category_name)
+
+        # selected username
+        self.selected_username = self.settings.username if (len(self.settings.username) > 0) else None
+
+        # username selection
+        layout = self.settings.layout
+        self.username_title = QLabel('Username', self)
+        self.username_search = QLineEdit(self)
+        self.username_selection = MultiQLabelDisplay(
+            font_police=layout.font_police, font_size=layout.font_size, border_size=layout.border_size,
+            vertical_spacing=layout.vertical_spacing, color_default=layout.color_default)
+
+        # display match data information
+        layout = self.settings.layout
+        self.match_data_display = MultiQLabelDisplay(
+            font_police=layout.font_police, font_size=layout.font_size,
+            image_height=layout.match_data.image_height, border_size=layout.border_size,
+            vertical_spacing=layout.vertical_spacing, color_default=layout.color_default,
+            game_pictures_folder=self.directory_game_pictures, common_pictures_folder=self.directory_common_pictures)
+
+        self.configuration_initialization_2()
+
+    def reload(self, update_settings):
+        """Reload the application settings, build orders...
+
+        Parameters
+        ----------
+        update_settings   True to update (reload) the settings, False to keep the current ones
+        """
+        super().reload(update_settings)
+
+        # selected username
+        self.selected_username = self.settings.username if (len(self.settings.username) > 0) else None
+
+        # username selection
+        layout = self.settings.layout
+        self.username_selection.update_settings(
+            font_police=layout.font_police, font_size=layout.font_size, border_size=layout.border_size,
+            vertical_spacing=layout.vertical_spacing, color_default=layout.color_default)
+
+        # display match data information
+        self.match_data_display.update_settings(
+            font_police=layout.font_police, font_size=layout.font_size,
+            image_height=layout.match_data.image_height, border_size=layout.border_size,
+            vertical_spacing=layout.vertical_spacing, color_default=layout.color_default)
+
+        self.configuration_initialization_2()
+
     def select_username(self, username: str = None):
         """Select the username
 
@@ -1452,38 +1243,57 @@ class RTSGameOverlay(QMainWindow):
         self.username_search.clearFocus()
 
     def hide_elements(self):
-        """Hide elements"""
-
-        # configuration buttons
-        self.next_panel_button.hide()
-
-        self.config_quit_button.hide()
-        self.config_save_button.hide()
-        self.config_reload_button.hide()
-        self.config_hotkey_button.hide()
-        self.config_build_order_button.hide()
-
-        self.build_order_step.hide()
-        self.build_order_previous_button.hide()
-        self.build_order_next_button.hide()
-
-        # police, scaling combo
-        self.font_size_input.hide()
-        self.scaling_input.hide()
-
-        # search build order
-        self.build_order_title.hide()
-        self.build_order_search.hide()
-        self.build_order_selection.hide()
+        super().hide_elements()
 
         # search username
         self.username_title.hide()
         self.username_search.hide()
         self.username_selection.hide()
 
-        # display build order
-        self.build_order_resources.hide()
-        self.build_order_notes.hide()
-
         # display match data
         self.match_data_display.hide()
+
+    def settings_scaling(self):
+        """Apply the scaling on the settings"""
+        super().settings_scaling()
+
+        assert 0 <= self.scaling_input_selected_id < len(self.scaling_input_combo_ids)
+        layout = self.settings.layout
+        unscaled_layout = self.unscaled_settings.layout
+        scaling = self.scaling_input_combo_ids[self.scaling_input_selected_id] / 100.0  # [%] -> [-]
+
+        configuration = layout.configuration
+        unscaled_configuration = unscaled_layout.configuration
+
+        configuration.search_spacing = scale_int(scaling, unscaled_configuration.search_spacing)
+        configuration.username_search_size = scale_list_int(scaling, unscaled_configuration.username_search_size)
+
+        match_data = layout.match_data
+        unscaled_match_data = unscaled_layout.match_data
+        match_data.image_height = scale_int(scaling, unscaled_match_data.image_height)
+        match_data.flag_width = scale_int(scaling, unscaled_match_data.flag_width)
+        match_data.flag_height = scale_int(scaling, unscaled_match_data.flag_height)
+        match_data.resource_spacing = scale_int(scaling, unscaled_match_data.resource_spacing)
+
+    def configuration_initialization_2(self):
+        """Configuration elements initialization (common to constructor and reload),
+        cannot be called before the end of the constructor."""
+        layout = self.settings.layout
+        color_default = layout.color_default
+        color_default_str = f'color: rgb({color_default[0]}, {color_default[1]}, {color_default[2]})'
+        qwidget_color_default_str = f'QWidget{{ {color_default_str}; border: 1px solid white }};'
+
+        # indicating the selected username
+        self.select_username(self.settings.username)
+
+        # title for the username search bar
+        self.username_title.setStyleSheet(color_default_str)
+        self.username_title.setFont(QFont(layout.font_police, layout.font_size))
+        self.username_title.adjustSize()
+
+        # username search bar
+        self.username_search.resize(layout.configuration.username_search_size[0],
+                                    layout.configuration.username_search_size[1])
+        self.username_search.setStyleSheet(qwidget_color_default_str)
+        self.username_search.setFont(QFont(layout.font_police, layout.font_size))
+        self.username_search.setToolTip('username, profile ID or steam ID')

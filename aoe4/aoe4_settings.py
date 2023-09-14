@@ -1,6 +1,7 @@
 import json
 from common.settings_subclass import SettingsSubclass
-from common.rts_settings import RTSConfigurationUsernameLayout, RTSLayout, RTSImages, RTSOverlaySettings
+from common.rts_settings import RTSConfigurationUsernameLayout, RTSLayout, RTSImages, RTSOverlaySettings, \
+    RTSBuildOrderLayout, RTSBuildOrderInputLayout
 
 
 class AoE4ConfigurationLayout(RTSConfigurationUsernameLayout):
@@ -49,6 +50,7 @@ class AoE4Layout(RTSLayout):
         """Constructor"""
         super().__init__()
         self.configuration: AoE4ConfigurationLayout = AoE4ConfigurationLayout()  # configuration layout
+        self.build_order: RTSBuildOrderLayout = RTSBuildOrderLayout()  # build order layout
         self.match_data: AoE4MatchDataLayout = AoE4MatchDataLayout()  # match data layout
 
 
@@ -79,6 +81,8 @@ class AoE4OverlaySettings(RTSOverlaySettings):
         """Constructor"""
         super().__init__()
 
+        self.panel_build_order = RTSBuildOrderInputLayout()  # panel to input a build order
+
         self.match_data_call_ms = 10000  # interval between 2 calls related to match data [ms]
 
         self.url_timeout = 20  # timeout for URL requests [s]
@@ -92,21 +96,6 @@ class AoE4OverlaySettings(RTSOverlaySettings):
 
         # images
         self.images = AoE4Images()
-
-        # panel to input a build order
-        self.panel_build_order.build_order_website = ['age4builder.com', 'https://age4builder.com']
-        self.panel_build_order.edit_init_text = \
-            'Replace this text by any build order in correct JSON format (see Readme.md), ' \
-            'then click on \'Add build order\'.' \
-            '\n\nYou can get many build orders with the requested format from age4builder.com ' \
-            '(use the corresponding button below).' \
-            '\nAfter selecting a build order, click on the salamander icon (on age4builder.com), ' \
-            'then paste it here.' \
-            '\nYou can also manually write your build order as JSON format, following the guidelines in Readme.md ' \
-            'or adapt one of the existing ones.' \
-            '\n\nYou can find all your saved build orders as JSON files by clicking on \'Open build orders folder\'.' \
-            '\nTo remove any build order, just delete the corresponding file and use \'reload settings\' ' \
-            '(or relaunch the overlay).'
 
 
 if __name__ == '__main__':

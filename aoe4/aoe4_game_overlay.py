@@ -10,7 +10,8 @@ from PyQt5.QtCore import QSize, Qt
 from common.build_order_tools import get_total_on_resource
 from common.label_display import QLabelSettings
 from common.useful_tools import cut_name_length, widget_x_end, widget_y_end
-from common.rts_overlay import RTSGameOverlay, scale_int, scale_list_int
+from common.rts_overlay import RTSGameMatchDataOverlay, scale_int, scale_list_int
+from common.build_order_window import BuildOrderWindow
 
 from aoe4.aoe4_settings import AoE4OverlaySettings
 from aoe4.aoe4_build_order import check_valid_aoe4_build_order
@@ -25,7 +26,7 @@ class PanelID(Enum):
     MATCH_DATA = 2  # Display Match Data
 
 
-class AoE4GameOverlay(RTSGameOverlay):
+class AoE4GameOverlay(RTSGameMatchDataOverlay):
     """Game overlay application for AoE4"""
 
     def __init__(self, directory_main: str):
@@ -38,6 +39,22 @@ class AoE4GameOverlay(RTSGameOverlay):
         super().__init__(directory_main=directory_main, name_game='aoe4', settings_name='aoe4_settings.json',
                          settings_class=AoE4OverlaySettings, check_valid_build_order=check_valid_aoe4_build_order,
                          build_order_category_name='civilization')
+
+        # build order instructions
+        self.build_order_instructions = \
+            'Replace this text by any build order in correct JSON format (see Readme.md), ' \
+            'then click on \'Add build order\'.' \
+            '\n\nYou can get many build orders with the requested format from age4builder.com ' \
+            'or aoe4guides.com (use the corresponding buttons below).' \
+            '\nOn age4builder.com, click on the salamander icon (after selecting a build order), ' \
+            'then paste the content here.' \
+            '\nOn aoe4guides.com, click on the 3 dots (upper right corner, after selecting a build order), then on ' \
+            'the \'Overlay Tool\' copy button, and paste the content here.' \
+            '\nYou can also manually write your build order as JSON format, following the guidelines in Readme.md ' \
+            'or adapt one of the existing ones.' \
+            '\n\nYou can find all your saved build orders as JSON files by clicking on \'Open build orders folder\'.' \
+            '\nTo remove any build order, just delete the corresponding file and use \'reload settings\' ' \
+            '(or relaunch the overlay).'
 
         self.selected_panel = PanelID.CONFIG  # panel to display
 
@@ -243,8 +260,7 @@ class AoE4GameOverlay(RTSGameOverlay):
         """Update the build order search matching display"""
         civilization_id = self.civilization_select.currentIndex()
         assert 0 <= civilization_id < len(self.civilization_combo_ids)
-        self.obtain_build_order_search(
-            key_condition={'civilization': self.civilization_combo_ids[civilization_id]})
+        self.obtain_build_order_search(key_condition={'civilization': self.civilization_combo_ids[civilization_id]})
         self.config_panel_layout()
 
     def config_panel_layout(self):
@@ -318,8 +334,7 @@ class AoE4GameOverlay(RTSGameOverlay):
 
         if widget_x_end(self.build_order_search) > widget_x_end(self.civilization_select):
             self.civilization_select.move(
-                widget_x_end(self.build_order_search) - self.civilization_select.width(),
-                self.civilization_select.y())
+                widget_x_end(self.build_order_search) - self.civilization_select.width(), self.civilization_select.y())
 
         self.build_order_selection.update_size_position(init_y=next_y)
 
@@ -440,7 +455,7 @@ class AoE4GameOverlay(RTSGameOverlay):
                 resources_line += spacing + '@' + images.population + '@ ' + str(target_population)
             if 1 <= selected_step['age'] <= 4:
                 resources_line += spacing + '@' + self.get_age_image(selected_step['age'])
-            if 'time' in selected_step:  # add time if indicated
+            if ('time' in selected_step) and (selected_step['time'] != ''):  # add time if indicated
                 resources_line += '@' + spacing + '@' + self.settings.images.time + '@' + selected_step['time']
 
             # for dict type target_resources, create a tooltip to associate with the resource icon
@@ -856,3 +871,20 @@ class AoE4GameOverlay(RTSGameOverlay):
                 self.fetch_game_match_data()  # launch potential new game search
 
             self.config_panel_layout()  # update layout
+
+    def panel_add_build_order(self):
+        """Open/close the panel to add a build order"""
+        if (self.panel_add_build_order is not None) and self.panel_add_build_order.isVisible():  # close panel
+            self.panel_add_build_order.close()
+            self.panel_add_build_order = None
+        else:  # open new panel
+            config = self.settings.panel_build_order
+            self.panel_add_build_order = BuildOrderWindow(
+                parent=self, game_icon=self.game_icon, build_order_folder=self.directory_build_orders,
+                font_police=config.font_police, font_size=config.font_size, color_font=config.color_font,
+                color_background=config.color_background, opacity=config.opacity, border_size=config.border_size,
+                edit_width=config.edit_width, edit_height=config.edit_height,
+                edit_init_text=self.build_order_instructions, button_margin=config.button_margin,
+                vertical_spacing=config.vertical_spacing, horizontal_spacing=config.horizontal_spacing,
+                build_order_websites=[['age4builder.com', 'https://age4builder.com'],
+                                      ['aoe4guides.com', 'https://aoe4guides.com']])
