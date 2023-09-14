@@ -39,12 +39,13 @@ def compile_clean(name_overlay: str, game_folder: str, out_lib_name: str,
         f' --include-data-dir=audio=audio'
     )
     if disable_console:  # disable the console
-        command = main_command + f' --disable-console {name_overlay}.py'
+        command = main_command + f' --disable-console {name_overlay}.py"'
     else:  # show the console
-        command = main_command + f' {name_overlay}.py'
+        command = main_command + f' {name_overlay}.py"'
 
     print(command)
-    print(Popen(command, stdout=PIPE, shell=True).communicate()[0].decode())  # compilation
+    # print(Popen(command, stdout=PIPE, shell=True).communicate()[0].decode())  # compilation
+    os.system(command)
 
     # rename executable name for version with console
     if not disable_console:
