@@ -300,9 +300,13 @@ class CountersSearchWindow(QMainWindow):
                 labels_settings=[QLabelSettings(text_bold=True)]
             )
             for unit in unit_info["weak_vs"]:
+                if unit in self.unit_counters.keys():
+                    line = f"@{self.unit_counters[unit]['image_name']}@{unit}"
+                else:
+                    line = unit
                 self.unit_counters_display.add_row_from_picture_line(
                     parent=self,
-                    line=unit
+                    line=line
                 )
 
         if "strong_vs" in unit_info.keys() and unit_info["strong_vs"] is not None:
@@ -312,7 +316,13 @@ class CountersSearchWindow(QMainWindow):
                 labels_settings=[QLabelSettings(text_bold=True)]
             )
             for unit in unit_info["strong_vs"]:
+                if unit in self.unit_counters.keys():
+                    line = f"@{self.unit_counters[unit]['image_name']}@{unit}"
+                else:
+                    line = unit
                 self.unit_counters_display.add_row_from_picture_line(
                     parent=self,
-                    line=unit
+                    line=line
             )
+
+
