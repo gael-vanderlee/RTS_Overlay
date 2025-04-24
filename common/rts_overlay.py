@@ -1190,7 +1190,7 @@ class RTSGameOverlay(QMainWindow):
             print(msg_text)
 
         # open popup message
-        popup_message('RTS Overlay - Settings saved', msg_text)
+        # popup_message('RTS Overlay - Settings saved', msg_text)
 
     def update_mouse(self):
         """Update the mouse position"""

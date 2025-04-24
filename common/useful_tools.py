@@ -155,11 +155,11 @@ class TwinHoverButton:
         """
         self.button.setIcon(icon)
         self.button.setIconSize(button_qsize)
-        self.button.resize(button_qsize)
+        self.button.setFixedSize(button_qsize)
 
         self.hovering_button.setIcon(icon)
         self.hovering_button.setIconSize(button_qsize)
-        self.hovering_button.resize(button_qsize)
+        self.hovering_button.setFixedSize(button_qsize)
 
     def update_click_connect(self, click_connect, click_connect_args):
         """Update the function to activate when clicking on the button

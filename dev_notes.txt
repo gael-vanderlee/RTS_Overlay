@@ -1,0 +1,5 @@
+Nuitka:
+- Does not work with pyenv pythons on MacOS
+
+Keyboard:
+- Does not seem to work at all on macOS
